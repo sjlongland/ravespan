@@ -60,7 +60,7 @@ class InstrumentDialog(QtWidgets.QDialog):
         self.def_row = 6
         clabels = ["instrument", 'A', "res.", "lambda_0", 'N', 'shift']
         cwidths = {"instrument": 120, 'A': 25, "res.": 60, "lambda_0": 75, 'N': 40, 'shift': 55}
-        cw_sum = sum(cwidths.values())
+        cw_sum = sum(list(cwidths.values()))
         self.cind = {k:i for i,k in enumerate(clabels)}
         def_col = len(clabels)
 

@@ -857,7 +857,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         'savespec': ['gtk-save-as.png', "Save spectrum", None, 'Save spectrum as...', self.saveSpectrum],
         'savetpl1': ['gtk-save-as.png', "Save template 1", None, 'Save template 1 as...', self.saveTemplate1],
         'savetpl2': ['gtk-save-as.png', "Save template 2", None, 'Save template 2 as...', self.saveTemplate2],
-        'quit': ['gtk-quit.png', "Quit", "Ctrl+Q", 'Quit application', QtCore.SLOT('close()')]
+        'quit': ['gtk-quit.png', "Quit", "Ctrl+Q", 'Quit application', self.close]
         }
                         
         for fmitem in filemenu_order:
@@ -1218,7 +1218,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.show_grid.addWidget(prefs_butt,3,3,1,2)
         quit_butt = QtWidgets.QPushButton("&Quit",self)
         quit_butt.setStatusTip('Quit the application.')
-        quit_butt.clicked.connect(QtCore.SLOT('close()'))
+        quit_butt.clicked.connect(self.close)
         self.show_grid.addWidget(quit_butt,3,5,1,2)
 
 

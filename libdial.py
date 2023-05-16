@@ -76,7 +76,7 @@ class InstrumentDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         vlayout.addWidget(button_box)
 
         self.setLayout(vlayout)
@@ -260,7 +260,7 @@ class FittingDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         close_button.setAutoDefault(False)
         vlayout.addWidget(button_box)
 
@@ -576,7 +576,7 @@ class TemplateDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
         self.apply_button.clicked.connect(self.apply_params)
         vbotlayout.addWidget(button_box)
@@ -1055,7 +1055,7 @@ class PreferencesDialog(QtWidgets.QDialog):
         save_button = button_box.addButton(QtWidgets.QDialogButtonBox.Save)
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         save_button.clicked.connect(self.save_preferences)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         mainlayout.addWidget(button_box)
 
         self.setLayout(mainlayout)
@@ -1260,7 +1260,7 @@ class EditMaskDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
         self.apply_button.clicked.connect(self.apply_masks)
         vlayout.addWidget(button_box)
@@ -1321,7 +1321,7 @@ class HelpDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        close_button.clicked.connect(QtCore.SLOT('close()'))
+        close_button.clicked.connect(self.close)
         vlayout.addWidget(button_box)
 
         self.setLayout(vlayout)

@@ -528,7 +528,7 @@ class RV_CURVE(QtWidgets.QMainWindow):
             else:
                 self.dirpath = self.main.specdir + '/' + self.dirpath
         if not os.path.isdir(self.dirpath):
-            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No directory with data for the selected object is found.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No directory with data for the selected object is found.", QtWidgets.QMessageBox.Ok)
             return
         
         self.obj_fid = obj_fid

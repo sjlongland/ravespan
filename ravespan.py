@@ -380,7 +380,7 @@ class RV_MENU(QtWidgets.QMainWindow):
                 print("\nError reading template:", stext, end=' ')
                 print("=> Template list refresh was forced")
                 msgBox = QtWidgets.QMessageBox.warning(self, "Template error", "Error reading template: " + \
-                                          stext + "\nTemplate list refresh was forced.", QtGui.QMessageBox.Ok)
+                                          stext + "\nTemplate list refresh was forced.", QtWidgets.QMessageBox.Ok)
                 self.refreshTemplates()
         else:
             pti = self.get_paratemplate_index(stext)
@@ -609,7 +609,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         filepath = str(filepath)
         if not filepath: return
         if not filepath.endswith(".obj"):
-            msgBox = QtWidgets.QMessageBox.warning(self, "File error", "This is not an object file.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "File error", "This is not an object file.", QtWidgets.QMessageBox.Ok)
             return
         obj_fid = os.path.basename(filepath)[:-4]
 
@@ -719,7 +719,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.saveObject()
 
     def browse_data(self):
-        datapath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open file', self.specdir, QtGui.QFileDialog.ShowDirsOnly)
+        datapath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open file', self.specdir, QtWidgets.QFileDialog.ShowDirsOnly)
         datapath = str(datapath)    
         if not datapath: return
 
@@ -730,7 +730,7 @@ class RV_MENU(QtWidgets.QMainWindow):
                 ngood+=1
 
         if ngood == 0:
-            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No data in the selected directory is found.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No data in the selected directory is found.", QtWidgets.QMessageBox.Ok)
         
         datapath = datapath.replace(os.path.realpath(self.specdir),'')
         if datapath[0] == '/':

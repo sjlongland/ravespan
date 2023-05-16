@@ -1079,7 +1079,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
         if self.spec is None:
             msgBox = QtWidgets.QMessageBox.warning(self, "No spectrum", \
             "Cannot calculate as there is no spectrum loaded.", \
-            QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.Ok)
             return
         v0 = self.main.get_v0_from_field()
         barycorr = self.main.curve.get_currpoint_barycorr()
@@ -1087,7 +1087,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
         is_ok = self.apply_log_and_mask(resolution,method, use_norm, sd_mode=sd_mode, vshift=vshift, allow_binning=True)
         if not is_ok:
             msgBox = QtWidgets.QMessageBox.warning(self, "Mask error", \
-            "Mask is too narrow or outside spectrum.", QtGui.QMessageBox.Ok)
+            "Mask is too narrow or outside spectrum.", QtWidgets.QMessageBox.Ok)
             return
          
         mul,add = self.main.preferences.get_vrange_pars()
@@ -1114,7 +1114,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
             
         else:
             msgBox = QtWidgets.QMessageBox.warning(self, "Not implemented", \
-            "The method is not yet implemented.", QtGui.QMessageBox.Ok)
+            "The method is not yet implemented.", QtWidgets.QMessageBox.Ok)
             return 
 
         if plot_anal:
@@ -1370,7 +1370,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
 
             if not is_ok:
                 msgBox = QtWidgets.QMessageBox.warning(self, "Mask error", \
-                "Mask is too narrow or outside spectrum.", QtGui.QMessageBox.Ok)
+                "Mask is too narrow or outside spectrum.", QtWidgets.QMessageBox.Ok)
                 # print "--- skipped: Mask is too narrow or outside spectrum."
                 continue
 
@@ -1704,7 +1704,7 @@ class SDDialog(QtWidgets.QDialog):
 
     def sd_mode_enabled(self, status):
         if not self.sd_started and status: 
-            msgBox = QtWidgets.QMessageBox.warning(self, "SD mode enabled", "SD mode is now enabled. In this mode if you select T1 and run velocity analysis T2 will be subtracted from each spectrum and only velocity of the first component will be extracted and vice verse if you select T2. Moreover when you start SD analysis, the process will start from a template (in other case it starts from a flat spectrum uniformly equal to 1.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "SD mode enabled", "SD mode is now enabled. In this mode if you select T1 and run velocity analysis T2 will be subtracted from each spectrum and only velocity of the first component will be extracted and vice verse if you select T2. Moreover when you start SD analysis, the process will start from a template (in other case it starts from a flat spectrum uniformly equal to 1.", QtWidgets.QMessageBox.Ok)
 
     def binning_changed(self, value):
         self.update_res_text(value)

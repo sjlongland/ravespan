@@ -69,7 +69,7 @@ class InstrumentDialog(QtGui.QDialog):
         
         self.instr_table = QtGui.QTableWidget(self.def_row, def_col, self)
         self.instr_table.setHorizontalHeaderLabels(clabels)
-        for k,i in self.cind.iteritems():
+        for k,i in self.cind.items():
             self.instr_table.setColumnWidth(i, cwidths[k])
         
         vlayout.addWidget(self.instr_table)
@@ -109,7 +109,7 @@ class InstrumentDialog(QtGui.QDialog):
                 tobj.setTextAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignCenter)
                 self.instr_table.setItem(i, col, tobj)
             
-            for k,v in {'shift':'0.0'}.iteritems():
+            for k,v in {'shift':'0.0'}.items():
                 obj = QtGui.QTableWidgetItem(v)
                 obj.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.instr_table.setItem(i, self.cind[k], obj)
@@ -304,18 +304,18 @@ class FittingDialog(QtGui.QDialog):
         return self.pulsnharm_spin[i].value()
 
     def clear_fields(self):
-        for checkb in self.rvmodifiers_cb.values():
+        for checkb in list(self.rvmodifiers_cb.values()):
             checkb.setChecked(False)
         
         self.tb_type.setCurrentIndex(0)
         
-        for key, val in self.tb_pdef_d.iteritems():
+        for key, val in self.tb_pdef_d.items():
             self.tb_spin[key].setValue(val)
         
         for i in range(2):
             self.pulsnharm_spin[i].setValue(2)
         
-        for key, val in self.puls_pdef_d.iteritems():
+        for key, val in self.puls_pdef_d.items():
             self.puls_spin[0][key].setValue(val)
             self.puls_spin[1][key].setValue(val)
         
@@ -368,7 +368,7 @@ class FittingDialog(QtGui.QDialog):
             elif rv_mod in ["puls1", "puls2"]:
                 fobj.write("nharm  = %s\n"%self.get_puls_nharm(int(rv_mod[-1:])-1))
             parvals = self.get_parvalues_for(rv_mod)
-            for key, val in parvals.iteritems():
+            for key, val in parvals.items():
                 fobj.write("%-6s = %s\n"%(key,val))
         
 
@@ -389,14 +389,14 @@ class FittingDialog(QtGui.QDialog):
                 parmask[key] = self.puls_cb[num][key].isChecked()
             
             key, val = "a1", 0.0
-            if "a1" in self.puls_fourharms[num].keys():
+            if "a1" in list(self.puls_fourharms[num].keys()):
                 val = self.puls_fourharms[num]["a1"]
             parvalues[key], limits[key], parmask[key] = val, [None, None], True
             
             for i in range(1, self.pulsnharm_spin[num].value()):
                 for c in ["a","b"]:
                     key, val = "%s%d"%(c,i+1), 0.0
-                    if key in self.puls_fourharms[num].keys():
+                    if key in list(self.puls_fourharms[num].keys()):
                         val = self.puls_fourharms[num][key]
                     parvalues[key], limits[key], parmask[key] = val, [None, None], True
         
@@ -411,7 +411,7 @@ class FittingDialog(QtGui.QDialog):
         parlimited = []
         puls_four_lim = self.main.preferences.get_puls_four_lim()
         for p in parlist:
-            if p in self.plims_d.keys():
+            if p in list(self.plims_d.keys()):
                 parlims += [self.plims_d[p]]
                 parlimited += [[1,1]]
             else: 
@@ -423,13 +423,13 @@ class FittingDialog(QtGui.QDialog):
     
     def set_parvalues_for(self, mod, pardict):
         if mod == "3rd_body":
-            for key in pardict.keys():
+            for key in list(pardict.keys()):
                 self.tb_spin[key].setValue(pardict[key])
 
         nharm = 0
         if mod in ["puls1", "puls2"]:
             num = int(mod[4])-1
-            for key in pardict.keys():
+            for key in list(pardict.keys()):
                 if key in self.rvmod_parorder["puls1"]:
                     self.puls_spin[num][key].setValue(pardict[key])
                 else:
@@ -458,7 +458,7 @@ class FittingDialog(QtGui.QDialog):
     
     def set_fields(self, data):
         """ similar to 'set_parvalues_for' but uses 'enabled' key and more general 'data' dict """
-        for key,val in data["3rd_body"].iteritems():
+        for key,val in data["3rd_body"].items():
             if key == "enabled":
                 self.rvmodifiers_cb["3rd_body"].blockSignals(True)
                 self.rvmodifiers_cb["3rd_body"].setChecked(val)
@@ -474,7 +474,7 @@ class FittingDialog(QtGui.QDialog):
             
         for num, rv_mod in enumerate(["puls1", "puls2"]):
             nharm = 0
-            for key,val in data[rv_mod].iteritems():
+            for key,val in data[rv_mod].items():
                 if key == "enabled":
                     self.rvmodifiers_cb[rv_mod].blockSignals(True)
                     self.rvmodifiers_cb[rv_mod].setChecked(val)
@@ -516,7 +516,7 @@ class TemplateDialog(QtGui.QDialog):
         self.i_spins = {}
         self.i_steps = {"teff": 50, "logg": 0.25, "feh": 0.05}
         self.i_decs = {"teff": 0, "logg": 2, "feh": 2}
-        self.int_exist = dict(zip(self.pars, [True,True,True]))   
+        self.int_exist = dict(list(zip(self.pars, [True,True,True])))   
         self.colors = [QtGui.QColor(0,0,0),QtGui.QColor(255,0,0),QtGui.QColor(0,210,0)]
 
         self.get_data_from_config()
@@ -621,7 +621,7 @@ class TemplateDialog(QtGui.QDialog):
     def get_data_from_config(self):
         self.grid = {}
         if not os.path.exists(self.main.slibdir + '/slib.cfg'):
-            print "INFO: Template spectra library (optional) not found. You can still use templates from ./templates directory."
+            print("INFO: Template spectra library (optional) not found. You can still use templates from ./templates directory.")
             #print "INFO: file '%s/slib.cfg' not found."%self.main.slibdir
             self.w0, self.res = "4000", "0.02"
             for p in self.pars:
@@ -645,7 +645,7 @@ class TemplateDialog(QtGui.QDialog):
         """ FILL COMBO WIDGETS """
         for key in self.pars:
             if len(self.grid[key])==0: continue
-            strvals = map(str, self.grid[key])
+            strvals = list(map(str, self.grid[key]))
             self.combos[key].addItems(strvals)
             for i in range(2):
                 self.data[i][key] = strvals[(len(strvals)-1)//2]
@@ -722,9 +722,9 @@ class TemplateDialog(QtGui.QDialog):
 
         igrid, ikeys = self.get_interpolation_grid()
         iparval_dict = dict([[p,[self.i_spins[p].value(),p in ikeys]] for p in self.pars])
-        print iparval_dict
+        print(iparval_dict)
         itpl_files = self.get_template_grid(igrid)
-        print igrid
+        print(igrid)
         iid, iname = self.create_interpolated(iparval_dict, igrid, itpl_files, ikeys)
         self.main.add_template(iname)
         self.main.set_template(iid, iname, self.tnum)
@@ -761,7 +761,7 @@ class TemplateDialog(QtGui.QDialog):
         for v3 in all_values[k3]:
             for v2 in all_values[k2]:
                 for v1 in all_values[k1]:
-                    strlist = map(str, [v1,v2,v3]) + [self.w0] + [self.res]
+                    strlist = list(map(str, [v1,v2,v3])) + [self.w0] + [self.res]
                     tname = "_".join(strlist)
                     tpath = self.main.slibdir + "/" + tname
                     dtfiles += [fromfile(tpath,dtype=float32)]
@@ -771,7 +771,7 @@ class TemplateDialog(QtGui.QDialog):
         w = vals[1] - vals[0]
         w1 = (vals[1] - value)/w
         w2 = 1. - w1
-        print "X:", w1, w2
+        print("X:", w1, w2)
         ispec = specs[0]*w1 + specs[1]*w2
         return ispec
 
@@ -782,7 +782,7 @@ class TemplateDialog(QtGui.QDialog):
         w2x = 1. - w1x
         w1y = (vals2[1] - values[1])/wy
         w2y = 1. - w1y
-        print "X:", w1x, w2x, " Y:", w1y, w2y
+        print("X:", w1x, w2x, " Y:", w1y, w2y)
         ispec = specs[0]*w1x*w1y + specs[1]*w2x*w1y + \
                 specs[2]*w1x*w2y + specs[3]*w2x*w2y
         return ispec
@@ -797,7 +797,7 @@ class TemplateDialog(QtGui.QDialog):
         w2y = 1. - w1y
         w1z = (vals3[1] - values[2])/wz
         w2z = 1. - w1z
-        print "X:", w1x, w2x, " Y:", w1y, w2y," Z:", w1z, w2z
+        print("X:", w1x, w2x, " Y:", w1y, w2y," Z:", w1z, w2z)
         ispec = specs[0]*w1x*w1y*w1z + specs[1]*w2x*w1y*w1z + \
                 specs[2]*w1x*w2y*w1z + specs[3]*w2x*w2y*w1z + \
                 specs[4]*w1x*w1y*w2z + specs[5]*w2x*w1y*w2z + \
@@ -810,7 +810,7 @@ class TemplateDialog(QtGui.QDialog):
         n_ikeys = len(ikeys)
 
         ivalues = [iparval_dict[p][0] for p in ikeys]
-        print ivalues, ikeys
+        print(ivalues, ikeys)
         
         if n_ikeys == 1:
             ik1 = ikeys[0]
@@ -829,7 +829,7 @@ class TemplateDialog(QtGui.QDialog):
         if vsini>0.0:
             res = float(self.res)
             w0  = float(self.w0)
-            print w0, res, vsini
+            print(w0, res, vsini)
             ispec = convolve_with_rotational_profile(ispec, w0, res, vsini, limbdark, step_size)
         
         itid   = str(self.iname.text())
@@ -838,7 +838,7 @@ class TemplateDialog(QtGui.QDialog):
         ispec.tofile(itpath)
         
         with open(itpath+".info", 'w') as finfo:
-            for key in iparval_dict.keys():
+            for key in list(iparval_dict.keys()):
                 finfo.write("%5s = %.2f\n"%(key,iparval_dict[key][0]))
         
         return itid, itname
@@ -995,8 +995,8 @@ class PreferencesDialog(QtGui.QDialog):
         self.fitfuncs["bf"] = ["rota", "gauss", "poly"]
         
                                         
-        for section in sect_items.keys():
-            for item,values in sect_items[section].iteritems():
+        for section in list(sect_items.keys()):
+            for item,values in sect_items[section].items():
                 (x,y,w,h),enabled,widget,wpars,tooltip = values
                 if item[:2] == "cb":
                     checked, name = wpars
@@ -1041,7 +1041,7 @@ class PreferencesDialog(QtGui.QDialog):
         self.connect(self.gopts["norm"]["spin_norm_at"], QtCore.SIGNAL('valueChanged(double)'), self.clear_db_norm_at)
         self.connect(self.gopts["advspec"]["ispin_nkeepsvd"], QtCore.SIGNAL('valueChanged(int)'), self.update_specdb_svd_max)
 
-        for keytab,groups in self.group_placement.iteritems():
+        for keytab,groups in self.group_placement.items():
             for gid in groups:
                 if gid == "--stretch":
                     tablayouts[keytab].addStretch()
@@ -1183,8 +1183,8 @@ class PreferencesDialog(QtGui.QDialog):
             elif otype == "ispin":
                 self.gopts[group][opt].setValue(int(val))
         except:
-            print "An error detected in the preferences file: ./preferences."
-            print "To fix it please go to the Preferences window and click the Save button."
+            print("An error detected in the preferences file: ./preferences.")
+            print("To fix it please go to the Preferences window and click the Save button.")
 
     def get_value(self, dopts, opt):
         otype = opt.split('_')[0]
@@ -1200,7 +1200,7 @@ class PreferencesDialog(QtGui.QDialog):
 
     def load_preferences(self):
         if not os.path.exists('preferences'):
-            print "Warning: './preferences' file doesn't exist."
+            print("Warning: './preferences' file doesn't exist.")
             return
             
         with open("preferences","r") as fpref:
@@ -1230,7 +1230,7 @@ class PreferencesDialog(QtGui.QDialog):
                     line = "%s = %s\n"%(opt,value)
                     fpref.write(line)
             fpref.write("\n")
-        print "* preferences saved..."
+        print("* preferences saved...")
 
     def show_or_activate(self):
         if self.isHidden():

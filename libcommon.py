@@ -160,9 +160,9 @@ def ensure_dir_exists(tdir):
         ndir = "/".join(tdir.split('/')[:-1])
         ensure_dir_exists(ndir)
         try:
-            os.mkdir(tdir, 0755)
+            os.mkdir(tdir, 0o755)
         except:
-            print "Cannot create dir:", tdir
+            print("Cannot create dir:", tdir)
             sys.exit(1)  
 
 def fix_hjd(hjd):
@@ -246,7 +246,7 @@ def fit_starpuls(x, hjd0, per, a0, *terms):
     nterms = len(terms)
     if nterms>0:
         if nterms%2==0:
-            print "Error: bad number of parameters."
+            print("Error: bad number of parameters.")
             raise ValueError
         ph = (x-hjd0)/per%1.0*dpi
         a1 = terms[0]
@@ -261,7 +261,7 @@ def fit_starpuls_OLD(x, hjd0, per, a0, a1, *terms):
     ph = (x-hjd0)/per%1.0*dpi
     puls = a0+a1*cos(ph)
     if len(terms)%2:
-        print "Error: bad number of parameters."
+        print("Error: bad number of parameters.")
         raise ValueError
     nterms = len(terms)//2
     terms = array(terms).reshape(nterms,2)
@@ -324,10 +324,10 @@ def last_not_None(alist):
 
 def DEVINFO(*pars):
     if DEVELOP:
-        print func_name(),
+        print(func_name(), end=' ')
         for ipar in pars:
-            print ipar,
-        print
+            print(ipar, end=' ')
+        print()
 
 def func_name():
     return "<"+inspect.stack()[1][3]+">"
@@ -342,13 +342,13 @@ def convolve_with_rotational_profile(spec, f0, res, vsini, limbdark=0.6, step_si
     ntotal = len(spec)
     newspec = ones(ntotal)
     nstep = int(step_size/res) + 1
-    if DEVELOP: print func_name(), "N", ntotal, nstep
+    if DEVELOP: print(func_name(), "N", ntotal, nstep)
 
     c0 = 1.-limbdark/3.
     c1 = 2. * (1.-limbdark) / (pi * c0)
     c2 = limbdark / (2. * c0)
 
-    for i,j in zip(range(0,ntotal-nstep,nstep), range(nstep,ntotal,nstep)):
+    for i,j in zip(list(range(0,ntotal-nstep,nstep)), list(range(nstep,ntotal,nstep))):
         if j >= ntotal-nstep: j = ntotal
         l0 = f0 + res*(i+j)/2
         prof_radius = l0*vsini/vlight 
@@ -411,7 +411,7 @@ def newton(func, x0, fprime=None, args=(), tol=1.48e-8, maxiter=50):
             fval = func(*myargs)
             fpval = fprime(*myargs)
             if fpval == 0:
-                print "Warning: zero-derivative encountered."
+                print("Warning: zero-derivative encountered.")
                 return p0
             p = p0 - func(*myargs)/fprime(*myargs)
             if abs(p-p0) < tol:
@@ -425,7 +425,7 @@ def newton(func, x0, fprime=None, args=(), tol=1.48e-8, maxiter=50):
         for iter in range(maxiter):
             if q1 == q0:
                 if p1 != p0:
-                    print "Tolerance of %s reached" % (p1-p0)
+                    print("Tolerance of %s reached" % (p1-p0))
                 return (p1+p0)/2.0
             else:
                 p = p1 - q1*(p1-p0)/(q1-q0)
@@ -435,5 +435,5 @@ def newton(func, x0, fprime=None, args=(), tol=1.48e-8, maxiter=50):
             q0 = q1
             p1 = p
             q1 = func(*((p1,)+args))
-    raise RuntimeError, "Failed to converge after %d iterations, value is %s" % (maxiter,p)
+    raise RuntimeError("Failed to converge after %d iterations, value is %s" % (maxiter,p))
     

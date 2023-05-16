@@ -275,7 +275,7 @@ class DATA_VIEW(QtGui.QMainWindow):
     
 
     def get_visible_widths(self):
-        return [self.coldata[cid][1] for cid,cval in self.col_show.iteritems() if cval]
+        return [self.coldata[cid][1] for cid,cval in self.col_show.items() if cval]
         
 
     def get_labels(self):
@@ -339,13 +339,13 @@ class DATA_VIEW(QtGui.QMainWindow):
     def get_coldata(self, col):
         if type(col) is str:
             if col not in self.col_order:
-                print "Warning."
+                print("Warning.")
                 return
             cid = col
             colnum = self.col_order.index(col)
         else:
             if col > len(self.col_order):
-                print "Warning."
+                print("Warning.")
                 return
             cid = self.col_order[col]
             colnum = col
@@ -367,7 +367,7 @@ class DATA_VIEW(QtGui.QMainWindow):
         else:
             masked = False
 
-        if DEVELOP: print func_name(), cid, colnum, fmt, data
+        if DEVELOP: print(func_name(), cid, colnum, fmt, data)
 
         for rownum, ditem in enumerate(data):
             cell = self.table.item(rownum, colnum)
@@ -387,7 +387,7 @@ class DATA_VIEW(QtGui.QMainWindow):
             return
         if type(cols[0]) in [list, tuple]:
             cols = cols[0]
-        if DEVELOP: print func_name(), cols
+        if DEVELOP: print(func_name(), cols)
         for col in cols:
             self.update_col(col)
 

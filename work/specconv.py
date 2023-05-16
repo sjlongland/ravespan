@@ -53,13 +53,13 @@ def get_fileholder(fname):
         pyf = pyfits.open(fname)
         return pyf
     except:
-        print "IO error: no file or file cannot be read."
+        print("IO error: no file or file cannot be read.")
         sys.exit(0)
 
 args = sys.argv[1:]
 
 if len(args) == 0:
-    print "No filename given."
+    print("No filename given.")
     sys.exit()
 
 # ITERATE THROUGH FILES GIVEN AS ARGUMENTS:
@@ -67,8 +67,8 @@ if len(args) == 0:
 # spec_convert objectX_2017_02_12.fits objectX_2017_02_13.fits objectX_2017_02_14.fits
 # 
 for ia,fname in enumerate(args):
-    print "%d/%d"%(ia+1, len(args))
-    print " * file:", fname
+    print("%d/%d"%(ia+1, len(args)))
+    print(" * file:", fname)
     
     # OPEN FILE
     pyf = get_fileholder(fname)
@@ -115,7 +115,7 @@ for ia,fname in enumerate(args):
     # THEN COPY IT TO THE CORRESPONDING DIRECTORY IN specdb/
     # e.g. /home/user/ravespan/specdb/object_name/7234.12334_4501.12345431_0.01555_-2.123_HARPS
 
-    print "   ---->", filename
+    print("   ---->", filename)
 
 
 

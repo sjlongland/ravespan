@@ -213,7 +213,7 @@ class SPECTRUM(QtGui.QMainWindow):
             6867.2: ("atmO2->","atmospheric O2"), 6884. : ("<-atmO2","atmospheric O2"), \
             7593.7: ("atmO2->","atmospheric O2"), 7621. : ("<-atmO2","atmospheric O2") \
             }
-        for wlength in self.lines.keys():
+        for wlength in list(self.lines.keys()):
             data = self.lines[wlength]
             self.ax.plot([wlength]*2, [0.0,0.05], '-', c='b')
             self.axzoom.text(wlength, 1.12, data[0], size=9, horizontalalignment='center', \
@@ -236,9 +236,9 @@ class SPECTRUM(QtGui.QMainWindow):
                 stateR = self.main.cb_show_tpl[i].isChecked()
                 if state != stateR:
                     self.main.cb_show_tpl[i].setChecked(state)
-                print "SYNCING TPLS - SPEC"
+                print("SYNCING TPLS - SPEC")
             self.tpl_plot[i].set_visible(state)
-        print "PLOTTTING TPL"
+        print("PLOTTTING TPL")
         self.canvas.draw()
 
     def sync_normalization(self, state):
@@ -251,14 +251,14 @@ class SPECTRUM(QtGui.QMainWindow):
             del(self.dbase[idb][key])
             self.dbind[idb].remove(key)
             if DEVELOP:
-                print func_name(), key, "removed from", idb
+                print(func_name(), key, "removed from", idb)
 
     def add_to_db(self, idb, key, value):
         """ add and object to a database, keep them clean """
         self.dbase[idb][key] = value
         self.dbind[idb].append(key)
         if DEVELOP:
-            print func_name(), key, "added to", idb
+            print(func_name(), key, "added to", idb)
         self.db_maintenance(idb)
 
     def db_maintenance(self, idb):
@@ -268,7 +268,7 @@ class SPECTRUM(QtGui.QMainWindow):
             for i in range(overflow):
                 db_id = self.dbind[idb][0]
                 if DEVELOP:
-                    print func_name(), "db len:", len(self.dbind[idb]), "removing:", db_id
+                    print(func_name(), "db len:", len(self.dbind[idb]), "removing:", db_id)
                 del(self.dbase[idb][db_id])
                 self.dbind[idb] = self.dbind[idb][1:]
     
@@ -403,7 +403,7 @@ class SPECTRUM(QtGui.QMainWindow):
         self.norm_spec = norm_spec
         
         if DEVELOP:
-            print func_name(), self.xspec.dtype, self.spec.dtype, self.norm_spec.dtype
+            print(func_name(), self.xspec.dtype, self.spec.dtype, self.norm_spec.dtype)
 
         self.f0, self.res, self.speclen = f0, res, len(spec)
 
@@ -514,10 +514,10 @@ class SPECTRUM(QtGui.QMainWindow):
         if norm_at is None:
             sicents = icents[icents>0.49]
             ncent = (len(sicents)>0 and average(sicents)) or 0.5
-            print "Normalization at mode level %.3f level"%ncent
+            print("Normalization at mode level %.3f level"%ncent)
         else:
             ncent = norm_at
-            print "Normalization forced to %.3f level."%ncent
+            print("Normalization forced to %.3f level."%ncent)
 
         for i in range(0,n):
             ss = spec[islices[i]]
@@ -552,9 +552,9 @@ class SPECTRUM(QtGui.QMainWindow):
                 norm_spec = float32(spec / splev(xspec, spl))
             else:
                 norm_spec = float32(spec + 1.0 - splev(xspec, spl))
-            if DEVELOP: print func_name, "Normalization mode:", mode
+            if DEVELOP: print(func_name, "Normalization mode:", mode)
         except TypeError:
-            print "Normalization ERROR ! Not normalized spectrum will be used instead."
+            print("Normalization ERROR ! Not normalized spectrum will be used instead.")
             norm_spec = spec
         
         norm_spec[norm_spec<=0.0] = 1.0 
@@ -587,7 +587,7 @@ class SPECTRUM(QtGui.QMainWindow):
         """ Returns a pair: wavelengths array and template spectrum array. """
         xtpl, stpl = self.xtpls[num], self.tpl_specs[num]
         if bin>1:
-            print " -> binning enabled:", bin
+            print(" -> binning enabled:", bin)
             stpl = self.bin_ydata(stpl, bin)
             xtpl = self.create_binned_xdata(bin, self.tpl_f0[num], self.tpl_res[num], len(xtpl))
             
@@ -603,19 +603,19 @@ class SPECTRUM(QtGui.QMainWindow):
                 mask_fname = fname
                 break
         if mask_fname is None:
-            print "Warning: file '%s/masks.list' not found."%self.main.datadir
+            print("Warning: file '%s/masks.list' not found."%self.main.datadir)
             return
         with open(self.main.datadir + "/" + mask_fname) as smfile:
             for line in smfile:
                 ldata = line.split()
                 submasks = "".join(ldata[1:]).split(',')    
-                mask = [map(int,x.split('-')) for x in submasks]
+                mask = [list(map(int,x.split('-'))) for x in submasks]
                 self.masks[ldata[0]] = mask
     
     def select_mask(self, name):
         """ SELECT MASK """
         if name not in self.masks:
-            print "Warning: mask selected but doesn't exist in the database!"
+            print("Warning: mask selected but doesn't exist in the database!")
         self.use_mask = self.masks[name]
         for ma in self.mask_areas:   ma.remove()
         
@@ -653,7 +653,7 @@ class SPECTRUM(QtGui.QMainWindow):
         bdata = zeros(blen)
         for i in range(bin):
             bdata += data[i:blen*bin:bin]
-        print "Ydata:", blen
+        print("Ydata:", blen)
         return bdata/float(bin)
 
     def clear_spectrum(self):
@@ -677,7 +677,7 @@ class SPECTRUM(QtGui.QMainWindow):
             if tpl: 
                 v_comp = self.main.curve.get_selected_velocity(i, barycorr=True, force=True)
                 if v_comp is None:
-                    print "Warning! Velocity for %d component not known."%i
+                    print("Warning! Velocity for %d component not known."%i)
                     continue
                 lxt = log(self.xtpls[i]) + v_comp/vlight
                 logxtpl.append(lxt)
@@ -686,8 +686,8 @@ class SPECTRUM(QtGui.QMainWindow):
         if len(logxtpl)==0:
             return xspec, spec
     
-        if any(map(lambda x: len(x)<10, [logxspec]+logxtpl)):
-            print "Warning! Spectrum too short."
+        if any([len(x)<10 for x in [logxspec]+logxtpl]):
+            print("Warning! Spectrum too short.")
             return xspec, spec
 
         if res is None:
@@ -711,7 +711,7 @@ class SPECTRUM(QtGui.QMainWindow):
     
     def plot_data(self):
         """ PLOT SPECTRUM DATA """
-        if DEVELOP: print "drawing spec"
+        if DEVELOP: print("drawing spec")
         if self.xspec is None or len(self.xspec)==0:
             return
 
@@ -750,7 +750,7 @@ class SPECTRUM(QtGui.QMainWindow):
         if self.cb_update_limits.isChecked():
             self.ax.axis(ymin=self.ymin, ymax=self.ymax, xmin=self.xmin, xmax=self.xmax)
         
-        if DEVELOP: print func_name(), "SPECTRUM: PLOT DATA"
+        if DEVELOP: print(func_name(), "SPECTRUM: PLOT DATA")
         if self.plotting_enabled:
             self.canvas.draw()
 
@@ -761,8 +761,8 @@ class SPECTRUM(QtGui.QMainWindow):
         ntotal = len(self.tpl_specs[tnum])
         newspec = ones(ntotal)
         nstep = int(step_size/res) + 1
-        if DEVELOP: print func_name(), "N", ntotal, nstep
-        for i,j in zip(range(0,ntotal-nstep,nstep), range(nstep,ntotal,nstep)):
+        if DEVELOP: print(func_name(), "N", ntotal, nstep)
+        for i,j in zip(list(range(0,ntotal-nstep,nstep)), list(range(nstep,ntotal,nstep))):
             if j >= ntotal-nstep: j = ntotal
             l0 = f0 + res*(i+j)/2
             prof_radius = l0*3.*sig/vlight 
@@ -782,7 +782,7 @@ class SPECTRUM(QtGui.QMainWindow):
         f0 = self.tpl_f0[tnum]
         limbdark = self.main.preferences.get_tpl_limbdark()
         newspec = convolve_with_rotational_profile(spec, f0, res, vsini, limbdark, step_size)
-        if DEVELOP: print func_name(), len(newspec), min(newspec), max(newspec), newspec
+        if DEVELOP: print(func_name(), len(newspec), min(newspec), max(newspec), newspec)
         return newspec
 
 
@@ -812,8 +812,8 @@ class SPECTRUM(QtGui.QMainWindow):
             if os.path.exists(tpl_path+".info"):
                 with open(tpl_path+".info") as finfo:
                     ftxt = finfo.read()
-                    print tpl_file+":"
-                    print ftxt
+                    print(tpl_file+":")
+                    print(ftxt)
         else:
             return -1
         
@@ -828,7 +828,7 @@ class SPECTRUM(QtGui.QMainWindow):
                 l1 = fdata.readline().split()
                 l2 = fdata.readline().split()
                 if len(l1)<2 or len(l2)<2:
-                    print "Error reading template data file: "+fname
+                    print("Error reading template data file: "+fname)
                     raise IOError
                 vals[-1] = l1[1]
                 vals.append(l2[1])
@@ -861,7 +861,7 @@ class SPECTRUM(QtGui.QMainWindow):
 
 
         if DEVELOP:
-            print func_name(), self.xtpls[i].dtype, self.tpl_specs[i].dtype
+            print(func_name(), self.xtpls[i].dtype, self.tpl_specs[i].dtype)
 
         return 0
 
@@ -873,11 +873,11 @@ class SPECTRUM(QtGui.QMainWindow):
 
     def plot_template(self, i):
         """ PLOT TEMPLATE """
-        if DEVELOP: print "drawing templ"
+        if DEVELOP: print("drawing templ")
         self.tpl_plot[i].set_xdata(self.xtpls[i])
         self.tpl_plot[i].set_ydata(self.tpl_specs[i])
         if self.cb_show_tpl[i].isChecked() and self.plotting_enabled:
-            print "PLOT TEMPLATE"
+            print("PLOT TEMPLATE")
             self.ax.axis(ymin=self.ymin, ymax=self.ymax, xmin=self.xmin, xmax=self.xmax)
             self.canvas.draw()
 
@@ -890,7 +890,7 @@ class SPECTRUM(QtGui.QMainWindow):
     def show_spec(self, status=True):
         """ EVENT. Shows spectrum in RV SPEC window. """
         self.spec_plot.set_visible(status)
-        print "PLOTTING SPECTRUM"
+        print("PLOTTING SPECTRUM")
         self.canvas.draw()
     
     def switch_norm_spec(self, status=True):
@@ -914,8 +914,8 @@ class SPECTRUM(QtGui.QMainWindow):
             sltpl2 = None
 
         if DEVELOP:
-            print func_name(), sltpl.dtype
-            print "R_tpl:", len(self.tpl_specs[i_tpl]),
+            print(func_name(), sltpl.dtype)
+            print("R_tpl:", len(self.tpl_specs[i_tpl]), end=' ')
 
         return sltpl, sltpl2
 
@@ -925,7 +925,7 @@ class SPECTRUM(QtGui.QMainWindow):
         if bin>1:
             xdata = self.bin_xdata(xdata, bin_size)  
             ydata = self.bin_ydata(ydata, bin_size) 
-            print "Binning data for calculations:", bin_size
+            print("Binning data for calculations:", bin_size)
         return xdata, ydata
     
     
@@ -948,7 +948,7 @@ class SPECTRUM(QtGui.QMainWindow):
                 minx = max(minx, self.xtpls[other_tpl][0])
                 maxx = min(maxx, self.xtpls[other_tpl][-1])
 
-        print "Mask:",
+        print("Mask:", end=' ')
         if mask_mode == 'minmax':
             rleft = max(minx, self.use_mask[0][0])      
             rright = min(maxx, self.use_mask[-1][-1])   
@@ -959,12 +959,12 @@ class SPECTRUM(QtGui.QMainWindow):
             for ran in self.use_mask:
                 rleft = max(minx,ran[0])
                 rright = min(maxx,ran[1])
-                print rleft,"-", rright,
+                print(rleft,"-", rright, end=' ')
                 if rleft < rright:
                     slogxspec = r_[slogxspec, arange(log(rleft), log(rright), res)]
                 else:
-                    print "(excluded!)",
-        print
+                    print("(excluded!)", end=' ')
+        print()
 
         return slogxspec
         
@@ -979,11 +979,11 @@ class SPECTRUM(QtGui.QMainWindow):
             slspec_2sub = float32(splev(slogxspec, spl, ext=1)) 
             slspec -= slspec_2sub
             if write_files:
-                savetxt("sd_org_2sub",zip(logxtpl_2sub, tpl_2sub))
-                savetxt("sd_int_2sub",zip(slogxspec, slspec_2sub))
-                savetxt("sd_org",zip(logxspec[cond], self.norm_spec[cond]))
-                savetxt("sd_int",zip(slogxspec, slspec+slspec_2sub))
-                savetxt("sd_sub",zip(slogxspec, slspec))
+                savetxt("sd_org_2sub",list(zip(logxtpl_2sub, tpl_2sub)))
+                savetxt("sd_int_2sub",list(zip(slogxspec, slspec_2sub)))
+                savetxt("sd_org",list(zip(logxspec[cond], self.norm_spec[cond])))
+                savetxt("sd_int",list(zip(slogxspec, slspec+slspec_2sub)))
+                savetxt("sd_sub",list(zip(slogxspec, slspec)))
 
     def _apply_log_and_mask_for(self, xdata, ydata, resolution, method=None, mask_mode='cut', vmargin=0.0, with_tpl=True, sd_mode=False, vshift=0.0, allow_binning=False, write_files=False):
         """ Applies logarithm and mask for given spectra. """
@@ -1006,7 +1006,7 @@ class SPECTRUM(QtGui.QMainWindow):
         slogxspec = self._get_log_spline_xspec_from_mask(xdata, ydata, with_tpl and (i_tpl, other_tpl), method, mask_mode, vmargin, res)
 
         if len(slogxspec) < 50:
-            print "Warning ! Mask is too narrow or outside spectrum."
+            print("Warning ! Mask is too narrow or outside spectrum.")
             return None, None, False
 
         cond = (logxspec>slogxspec[0]-777./vlight) & (logxspec<slogxspec[-1]+777./vlight)   
@@ -1045,8 +1045,8 @@ class SPECTRUM(QtGui.QMainWindow):
         self.masked_spec = star_spec[1]     
 
         if DEVELOP:
-            print func_name(), slspec.dtype
-            print "R_sp:",len(self.spec), " R_int:", len(self.masked_spec)
+            print(func_name(), slspec.dtype)
+            print("R_sp:",len(self.spec), " R_int:", len(self.masked_spec))
         return True   
 
 
@@ -1153,7 +1153,7 @@ class SPECTRUM(QtGui.QMainWindow):
         rms_mtpl1 = rms(self.masked_tpl_spec)
         rms_mtpl2 = rms(self.masked_tpl2_spec)
         
-        print "TODCOR:", rms_mspec, rms_mtpl1, rms_mtpl2
+        print("TODCOR:", rms_mspec, rms_mtpl1, rms_mtpl2)
         
         a = self.xcorr(self.masked_spec,self.masked_tpl_spec)/(slen*rms_mspec*rms_mtpl1)
         b = self.xcorr(self.masked_spec,self.masked_tpl2_spec)/(slen*rms_mspec*rms_mtpl2)
@@ -1163,11 +1163,11 @@ class SPECTRUM(QtGui.QMainWindow):
         ii = arange(-nran,nran+1,dtype=int)
 
         lii2 = len(ii)//2
-        if DEVELOP: print func_name(), n, nran, len(ii), lii2, len(ii[:lii2]), len(ii[lii2+1:])
+        if DEVELOP: print(func_name(), n, nran, len(ii), lii2, len(ii[:lii2]), len(ii[lii2+1:]))
                     
         ai = a[ii]  
         aa = ai**2
-        if DEVELOP: print func_name(), x2dcorr.shape, len(ii), len(ai)
+        if DEVELOP: print(func_name(), x2dcorr.shape, len(ii), len(ai))
         for i in ii:
             di = d[ii-i]
             x2dcorr[nran+i] = ( b[i]**2 + aa - (2*b[i]*ai*di) )/(1-di**2)
@@ -1190,12 +1190,12 @@ class SPECTRUM(QtGui.QMainWindow):
 
         tpl_hash = sum(self.masked_tpl_spec)    
         db_ind = (n, tpl_hash)
-        if DEVELOP: print func_name(), " MTS sum:", repr(tpl_hash)
+        if DEVELOP: print(func_name(), " MTS sum:", repr(tpl_hash))
 
-        if db_ind in self.dbase["svd"].keys():
+        if db_ind in list(self.dbase["svd"].keys()):
             U,singvals,V = self.dbase["svd"][db_ind]
         else:
-            print "* Creating new SVD matrices (n = %d)."%n
+            print("* Creating new SVD matrices (n = %d)."%n)
             tplspec = self.masked_tpl_spec.copy()
             lentpl = len(tplspec)
             if lentpl%2:
@@ -1205,13 +1205,13 @@ class SPECTRUM(QtGui.QMainWindow):
             ind = n-1-indx+indy
             des_mat = tplspec[ind]  
             if DEVELOP:
-                print func_name(), tplspec.dtype
+                print(func_name(), tplspec.dtype)
             U,singvals,V = svd(des_mat,full_matrices=False,compute_uv=True,overwrite_a=(not DEVELOP))              
             self.add_to_db("svd", db_ind, (U,singvals,V) )
         
             if DEVELOP:  
                 desch=dot(U,dot(diag(singvals),V))
-                print 'Design matrix check: ', allclose(des_mat,desch)
+                print('Design matrix check: ', allclose(des_mat,desch))
 
         bfunc = dot(transpose(V), dot(diag(1.0/singvals), dot(transpose(U),objspec)) )  
 
@@ -1258,23 +1258,23 @@ class SPECTRUM(QtGui.QMainWindow):
                                                         ftype, vmask1&vmask2, self.v0, v1, v2)
 
         if sd_specdb is None:
-            print "No files for analysis."
+            print("No files for analysis.")
             return None
         elif len(sd_specdb)<3:
-            print "Only %d file(s) selected for analysis... aborting."%len(sd_specdb)
+            print("Only %d file(s) selected for analysis... aborting."%len(sd_specdb))
             return None
 
         if sd_from_tpl:
             self.specAxy = [self.sd_xtpl, self.sd_tpl-0.5]
             first_calc_mode = self.sd_dialog.get_sd_avgmet()
-            print "SD from TPL"
+            print("SD from TPL")
         else:
-            i_widest = argmax(map(len,sd_xspecdb))
+            i_widest = argmax(list(map(len,sd_xspecdb)))
             sd_x = sd_xspecdb[i_widest].copy()
             self.specAxy = [sd_x, 0.5*ones(len(sd_x))]
             first_calc_mode = 'maximum'
-            print "SD NOT from TPL (maximum function is forced as a method for the first substep)"
-            print exp(sd_x[0]), exp(sd_x[-1])
+            print("SD NOT from TPL (maximum function is forced as a method for the first substep)")
+            print(exp(sd_x[0]), exp(sd_x[-1]))
 
         calc_mode = self.sd_dialog.get_sd_avgmet()
 
@@ -1292,7 +1292,7 @@ class SPECTRUM(QtGui.QMainWindow):
                                                    mode='calc_sec', calc_mode = calc_mode)
                 
         except MemoryError:
-            print "Not enough memory to continue operation."
+            print("Not enough memory to continue operation.")
             return None
 
         self.sd_pbar_val = self.sd_pbar_max
@@ -1300,7 +1300,7 @@ class SPECTRUM(QtGui.QMainWindow):
 
         self.main.set_sdmode(True)
 
-        print "\nSPECTRAL DISENTANGLING HAS FINISHED"
+        print("\nSPECTRAL DISENTANGLING HAS FINISHED")
 
     
         sdid, sdname = self.create_sd_spectra([self.specAxy, self.specBxy])
@@ -1336,19 +1336,19 @@ class SPECTRUM(QtGui.QMainWindow):
         sd_snrat = []
         self.sd_tpl = None
         
-        print "Total # of files:",nfiles
+        print("Total # of files:",nfiles)
         for i in range(nfiles):
             self.sd_pbar_val = i*self.sd_cost_load
             self.update_sd_progress_bar()
             
             if vmask[i] != 1:
-                print "--- File ignored (a measurement is disabled):", filelist[i]
+                print("--- File ignored (a measurement is disabled):", filelist[i])
                 self.sd_pbar_max -= self.sd_unit
                 continue
                         
             rvtmp = [v1[i], v2[i]]
 
-            print "+++ File loaded:", filelist[i]
+            print("+++ File loaded:", filelist[i])
             spec, xspec, norm_spec = self._load_any_spec(dirpath+'/'+filelist[i], f0[i], res[i], ftype[i])
 
             snrat = self.calc_sn_ratio(norm_spec)
@@ -1359,8 +1359,8 @@ class SPECTRUM(QtGui.QMainWindow):
             lmargin = abs(min(rvtmp)-v0)
             rmargin = abs(max(rvtmp)-v0)
             margin = abs(rvtmp[1]-rvtmp[0])
-            print "### v0:", self.v0, " # baryc:", baryc[i], " # vshift=", vshift
-            print "### margin:", margin
+            print("### v0:", self.v0, " # baryc:", baryc[i], " # vshift=", vshift)
+            print("### margin:", margin)
 
             if use_norm:
                 ydata = norm_spec
@@ -1408,11 +1408,11 @@ class SPECTRUM(QtGui.QMainWindow):
         xspec2sub_t, spec2sub = spec2sub_xy
 
         if len(xspec)<10 or len(xspec2sub_t)<10:
-            print "Warning! Spectrum too short."
+            print("Warning! Spectrum too short.")
             return None
         if res is None:
             res = (xspec[-1] - xspec[0])/float(len(xspec)-1)
-            print "Resolution is not given and is calculated!"
+            print("Resolution is not given and is calculated!")
 
         xspec2sub = xspec2sub_t.copy() + veldiff/vlight
         
@@ -1430,15 +1430,15 @@ class SPECTRUM(QtGui.QMainWindow):
         subtracted = i_spec - i_spec2sub
 
         if debug:
-            savetxt("sdio",zip(common_xspec,i_spec))
-            savetxt("sdis",zip(common_xspec,i_spec2sub))
-            savetxt("sdid",zip(common_xspec, subtracted))
+            savetxt("sdio",list(zip(common_xspec,i_spec)))
+            savetxt("sdis",list(zip(common_xspec,i_spec2sub)))
+            savetxt("sdid",list(zip(common_xspec, subtracted)))
         
         return common_xspec, subtracted
 
-    def calc_sspectrum(self, (xspecX, specX), sd_xspecdb, sd_specdb, sd_rvs, sd_snrat, mode='calc_primary', calc_mode = 'median', write_files=False, debug=False):
+    def calc_sspectrum(self, xxx_todo_changeme, sd_xspecdb, sd_specdb, sd_rvs, sd_snrat, mode='calc_primary', calc_mode = 'median', write_files=False, debug=False):
         """ Calculate single star spectra """
-
+        (xspecX, specX) = xxx_todo_changeme
         rvs_2sub = sd_rvs[:,0].copy()  
         rvs_2keep = sd_rvs[:,1].copy()   
         if mode == "calc_primary":
@@ -1447,7 +1447,7 @@ class SPECTRUM(QtGui.QMainWindow):
         all_common_xsp = []
         all_cleared_sp = []
 
-        print "\n *** starting spectral disentangling step in mode: %s\n"%mode
+        print("\n *** starting spectral disentangling step in mode: %s\n"%mode)
                 
         for i, (x_spec,spec,rv_2keep, rv_2sub) in enumerate(zip(sd_xspecdb, sd_specdb, rvs_2keep, rvs_2sub)):
 
@@ -1455,17 +1455,17 @@ class SPECTRUM(QtGui.QMainWindow):
             self.update_sd_progress_bar()
 
             vshift = rv_2sub - self.v0
-            print "::: r2sub=", rv_2sub, " : r2keep=", rv_2keep, " ::: vshift=", vshift
+            print("::: r2sub=", rv_2sub, " : r2keep=", rv_2keep, " ::: vshift=", vshift)
             common_xspec, spec_subother = self.subtract_spectrum((x_spec,spec), (xspecX, specX), veldiff = vshift, res = self.sd_res, debug=debug if i==0 else False)
 
             common_xspec -= (rv_2keep-self.v0)/vlight
 
             all_common_xsp += [common_xspec]
             all_cleared_sp += [spec_subother]
-            print "preparing spectrum %d"%i
+            print("preparing spectrum %d"%i)
             
             if write_files:
-                savetxt("sdspec_%02d"%i,zip(common_xspec,spec_subother))
+                savetxt("sdspec_%02d"%i,list(zip(common_xspec,spec_subother)))
         
         final_spectra = None
         xmin,xmax = self.common_range(all_common_xsp)
@@ -1478,11 +1478,11 @@ class SPECTRUM(QtGui.QMainWindow):
             else:
                 final_spectra = c_[final_spectra, final_subspec]
 
-        print "\nCombining spectra using", calc_mode
+        print("\nCombining spectra using", calc_mode)
         calc_fun = {'average': mean, 'median': median, 'maximum': npmax, 'weighted average': average}
 
         if calc_mode not in calc_fun:
-            print "Warning! '%s' mode is not available: 'average' mode is used instead."
+            print("Warning! '%s' mode is not available: 'average' mode is used instead.")
             calc_mode = 'average'
 
         if 'weighted' in calc_mode:
@@ -1493,9 +1493,9 @@ class SPECTRUM(QtGui.QMainWindow):
         med_spec = median(avg_spec)
         
         if write_files:
-            savetxt("sdspec_med",zip(multi_common_xspec, avg_spec))
+            savetxt("sdspec_med",list(zip(multi_common_xspec, avg_spec)))
 
-        print "\n --> sd step finished\n"
+        print("\n --> sd step finished\n")
 
         out_spec = avg_spec-med_spec
         return [multi_common_xspec, out_spec+1.0]
@@ -1535,7 +1535,7 @@ class SPECTRUM(QtGui.QMainWindow):
                 fsdd.write("wavelength0= %f\n"%f0)
                 fsdd.write("resolution= %.12f\n"%res)           
 
-            print "Spectrum of component %d written as: %s"%(i+1,sdid)
+            print("Spectrum of component %d written as: %s"%(i+1,sdid))
             
             sdid_l.append(sdid)
             sdname_l.append(sdname)
@@ -1687,11 +1687,11 @@ class SDDialog(QtGui.QDialog):
             return
         if time.time() - self.sd_time_clicked < 1.0:
             self.sd_started = True
-            print "... and started."
+            print("... and started.")
             self.spectrum.spectra_separation(self.main.get_resolution())
             self.sd_started = False
         else:
-            print "Spectra disentangling enabled... (click again within 1 second to start)"
+            print("Spectra disentangling enabled... (click again within 1 second to start)")
             self.sd_time_clicked = time.time()
             def gt_fun():
                 org_text = self.disent_butt.text()

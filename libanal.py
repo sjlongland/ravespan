@@ -180,13 +180,13 @@ class SPECANAL(QtGui.QMainWindow):
         if event.inaxes:
             if event.button == 1 and self.current_method in ["ccf", "bf"]:
                 metpow = self.data[argmin(abs(self.xdata-event.xdata))]
-                print "v = %.3f   (%s power = %.3f)"%(event.xdata, self.current_method, metpow) 
+                print("v = %.3f   (%s power = %.3f)"%(event.xdata, self.current_method, metpow)) 
             if self.cb_manual.isChecked():
                 if self.current_method in ["ccf","bf"] and event.button in [2,3]:
                     mi = (event.button-1)/2
                     fitenabled = (event.key!="shift")
                     fixother = (event.key=="control")
-                    if DEVELOP: print func_name(),event.key, mi, fitenabled, fixother
+                    if DEVELOP: print(func_name(),event.key, mi, fitenabled, fixother)
                     self.setvelo_1D_click(event.xdata, mi, fitenabled=fitenabled, fixother=fixother)
                     
                 elif self.current_method == "todcor" and event.button == 3:
@@ -194,12 +194,12 @@ class SPECANAL(QtGui.QMainWindow):
                     vy = event.ydata
                     if self.main.cb_fit.isChecked():
                         vx, vy = self.click_fit_todcor(vx, vy)
-                        print "clicked: %.3f, %.3f"%(event.xdata, event.ydata)
+                        print("clicked: %.3f, %.3f"%(event.xdata, event.ydata))
                     self.main.curve.set_selected_velocity( 0, vx, draw=False)
                     self.main.curve.set_selected_velocity( 1, vy )
                     self.plot_2D_marks((vx,vy), draw=True)
-                    print "v1=%.3f"%vx
-                    print "v2=%.3f"%vy
+                    print("v1=%.3f"%vx)
+                    print("v2=%.3f"%vy)
 
     def _kpressed(self,event):
         if self.cb_manual.isChecked() and event.inaxes:
@@ -207,22 +207,22 @@ class SPECANAL(QtGui.QMainWindow):
                 if event.key in ['1', '!', 'q']:
                     fitenabled = event.key in ['1', 'q']
                     fixother = (event.key == 'q')
-                    if DEVELOP: print func_name(),event.key, 0, fitenabled, fixother                    
+                    if DEVELOP: print(func_name(),event.key, 0, fitenabled, fixother)                    
                     res = self.setvelo_1D_click(event.xdata, 0, fitenabled=fitenabled, fixother=fixother)
                 elif event.key in ['2', '@', 'w']:
                     fitenabled = event.key in ['2', 'w']
                     fixother = (event.key == 'w')
-                    if DEVELOP: print func_name(),event.key, 1, fitenabled, fixother
+                    if DEVELOP: print(func_name(),event.key, 1, fitenabled, fixother)
                     res = self.setvelo_1D_click(event.xdata, 1, fitenabled=fitenabled, fixother=fixother)
                 elif event.key in ['3', '#', 'e']:
                     fitenabled = event.key in ['3', 'e']
                     fixother = (event.key == 'e')
-                    if DEVELOP: print func_name(),event.key, 2, fitenabled, fixother
+                    if DEVELOP: print(func_name(),event.key, 2, fitenabled, fixother)
                     res = self.setvelo_1D_click(event.xdata, 2, fitenabled=fitenabled, fixother=fixother)
                 elif event.key in ['4', '$', 'r']:
                     fitenabled = event.key in ['4', 'r']
                     fixother = (event.key == 'r')
-                    if DEVELOP: print func_name(),event.key, 3, fitenabled, fixother
+                    if DEVELOP: print(func_name(),event.key, 3, fitenabled, fixother)
                     res = self.setvelo_1D_click(event.xdata, 3, fitenabled=fitenabled, fixother=fixother)
                 elif event.key == "f":
                     pass
@@ -256,7 +256,7 @@ class SPECANAL(QtGui.QMainWindow):
                 if not self.vfixed[i].isChecked():
                     fixed_v[i] = False
 
-        if DEVELOP: print func_name(), fixed_v
+        if DEVELOP: print(func_name(), fixed_v)
         return fixed_v
 
 
@@ -273,7 +273,7 @@ class SPECANAL(QtGui.QMainWindow):
                 v_str += "v%d = %7.3f"%(i+1, v)        
             if ve is not None:
                 v_str += "   v%d_err = %.3f"%(i+1, ve)
-            print v_str
+            print(v_str)
 
     def setvelo_1D_click(self, v, vind, fitenabled=True, fixother=False):
         """ vind - component number """
@@ -286,7 +286,7 @@ class SPECANAL(QtGui.QMainWindow):
             v = tmp
             ve = None
 
-        if DEVELOP: print func_name(), v, ve, vind
+        if DEVELOP: print(func_name(), v, ve, vind)
         self.set_rvc_1D_marks(v, ve, vind=vind, draw=True)
         self.write_velos(v,ve,vind)
 
@@ -300,7 +300,7 @@ class SPECANAL(QtGui.QMainWindow):
 
     def make_vlist(self, v, vind):
         """ if v is a scalar, create a v list => always return a list ! """
-        if DEVELOP: print func_name(), type(v), v, vind
+        if DEVELOP: print(func_name(), type(v), v, vind)
         vlist = v
         if isscalar(v):
             vlist = [None]*self.Nv
@@ -367,17 +367,17 @@ class SPECANAL(QtGui.QMainWindow):
         self.dfpar_lims  =  {"base": [[-0.1,0.5]], "gauss": [[None,None],[0.1,None],[0.0,1.]], \
                              "rota": [[None,None],[0.1,None],[0.0,20.0],[0.0,1.0]]}
         
-        for k in self.dfuncs.keys():
+        for k in list(self.dfuncs.keys()):
             if type(self.dfpars[k]) is str:
                 self.dfpars[k] = self.dfpars[self.dfpars[k]]
         
-        for k in self.dfuncs.keys():
+        for k in list(self.dfuncs.keys()):
             if k not in self.dfpar_lims:
                 self.dfpar_lims[k] = [[None,None] for p in self.dfpars[k]]
         
         self.dfpar_islim = {}
         self.dfnpars = {}
-        for k in self.dfuncs.keys():
+        for k in list(self.dfuncs.keys()):
             npars = len(self.dfpars[k])
             self.dfnpars[k] = npars
             pl = self.dfpar_lims[k]
@@ -413,7 +413,7 @@ class SPECANAL(QtGui.QMainWindow):
         fa = {'x':x, 'y':y, 'funcs': funcs}
         m = mpfit( self.mperrfun_nfun,  functkw=fa, parinfo=pari, iterfunct=None)
         if (m.status <= 0): 
-            print 'error message = ', m.errmsg
+            print('error message = ', m.errmsg)
         return m.params, m.perror
 
 
@@ -441,7 +441,7 @@ class SPECANAL(QtGui.QMainWindow):
                     if fixed_v[i]: fixed[1+np*i] = 1 
 
 
-        if DEVELOP: print func_name(), funcs, pars, fixed
+        if DEVELOP: print(func_name(), funcs, pars, fixed)
         
         pars, epars = self.mpfit_nfun(self.xdata, self.data, funcs, pars, fixed)
 
@@ -461,14 +461,14 @@ class SPECANAL(QtGui.QMainWindow):
                 velos += [v]
                 velerrs += [ve]
                 if fun == "rota":
-                    print "v%drot: %5.2f"%(i+1, pars[2+i*np]),
-                    print "| S%d = %5.2f"%(i+1, pars[3+i*np])
+                    print("v%drot: %5.2f"%(i+1, pars[2+i*np]), end=' ')
+                    print("| S%d = %5.2f"%(i+1, pars[3+i*np]))
                 elif fun == "gauss":
                     sig = pars[2+i*np]
                     h = pars[3+i*np]
-                    print "v%dfwhm/2: %5.2f"%(i+1, 2.355*sig/2.),
-                    print "| S%d = %5.2f"%(i+1, sig*h*sqrt(2*pi))
-        if DEVELOP: print func_name(), "%s pars:"%fun, pars, epars
+                    print("v%dfwhm/2: %5.2f"%(i+1, 2.355*sig/2.), end=' ')
+                    print("| S%d = %5.2f"%(i+1, sig*h*sqrt(2*pi)))
+        if DEVELOP: print(func_name(), "%s pars:"%fun, pars, epars)
         return profiles, velos, velerrs
    
     def fit_polynomial(self, x,y, method="3ppoly",npoints=1000):
@@ -483,10 +483,10 @@ class SPECANAL(QtGui.QMainWindow):
             xcen = fxvals[imax]
             fxv,fv = self.get_fit_vals(fpoly,xcen-span,xcen+span, npoints)
             vfmax = fxvals[argmax(fvals)]
-            if DEVELOP: print "using method:", method
+            if DEVELOP: print("using method:", method)
         else:
             vfmax,fmax = find_vertex(*r_[fxvals[imax-1:imax+2], fvals[imax-1:imax+2]])
-            if DEVELOP: print "using method:", method
+            if DEVELOP: print("using method:", method)
         return fxvals, fvals, vfmax
 
     def fit_1D_profile(self, x, y, im, vind, fixother=False):
@@ -524,7 +524,7 @@ class SPECANAL(QtGui.QMainWindow):
                 else:
                     velos0[i] = x[im]
             
-            if DEVELOP: print func_name(), method, velos0, fixed_v
+            if DEVELOP: print(func_name(), method, velos0, fixed_v)
             profiles, velos, velerrs = self.fit_n_funcs(velos0, fun=method, \
                                             fakefun="fake"+method, fixed_v = fixed_v)
             for i, prof in enumerate(profiles):
@@ -534,7 +534,7 @@ class SPECANAL(QtGui.QMainWindow):
                     (fxvals,fvals) = prof
                     self.plot_1D_fit(i, fxvals, fvals)
         else:
-            print "Method", method, "not implemented."
+            print("Method", method, "not implemented.")
             return 0        
         return velos, velerrs
 
@@ -555,7 +555,7 @@ class SPECANAL(QtGui.QMainWindow):
         cond = (self.xdata>xmin) & (self.xdata<xmax)
         cxdata, cdata = self.xdata[cond], self.data[cond]
         di = diff(sign(diff(cdata)))
-        if DEVELOP: print func_name(), len(cdata),len(di)
+        if DEVELOP: print(func_name(), len(cdata),len(di))
         maxcond = (di < 0) & (cdata[1:-1]>detection_limit[self.current_method])
         imaxs = where(maxcond)[0]+1
 
@@ -712,7 +712,7 @@ class SPECANAL(QtGui.QMainWindow):
         else:
             self.ymin, self.ymax = yran
                 
-        if DEVELOP:  print func_name(), method, len(data), len(xdata)
+        if DEVELOP:  print(func_name(), method, len(data), len(xdata))
 
         self.plot_1D_data(xdata, data)
 
@@ -762,7 +762,7 @@ class SPECANAL(QtGui.QMainWindow):
         nran = min(nran, len(data)//2)
         gaussprof = gauss(arange(-nran, nran+1), 0., sig_in_res_unit)/self.res
         sdata = convolve(self.bfdata, gaussprof, 'same')
-        if DEVELOP: print func_name(), sigma, self.res, nran*2+1, len(data), gaussprof[0]
+        if DEVELOP: print(func_name(), sigma, self.res, nran*2+1, len(data), gaussprof[0])
         return sdata
 
     def update_bf(self):
@@ -894,7 +894,7 @@ class SPECANAL(QtGui.QMainWindow):
         Y,X=meshgrid(y,x)           
 
         pars, success = leastsq(errfun, pars, args=(X,Y))
-        print "%d params of 2D poly, values from %g to %g"%(len(pars), min(pars), max(pars))
+        print("%d params of 2D poly, values from %g to %g"%(len(pars), min(pars), max(pars)))
 
         xmin, xmax = nx0*self.res + self.vshift, (nx0+lx)*self.res + self.vshift
         ymin, ymax = ny0*self.res + self.vshift, (ny0+ly)*self.res + self.vshift
@@ -913,8 +913,8 @@ class SPECANAL(QtGui.QMainWindow):
         y, x = x, y
         nx = int(x/self.res+0.5) + xran
         ny = int(y/self.res+0.5) + yran
-        print "ANAL:", self.data[nx,ny]
-        if DEVELOP: print func_name(), "nx,ny = ", nx,",", ny
+        print("ANAL:", self.data[nx,ny])
+        if DEVELOP: print(func_name(), "nx,ny = ", nx,",", ny)
         n = max (nmin, int(npar/self.res))
         nxmin = max(0,nx-n)
         nymin = max(0,ny-n)
@@ -931,10 +931,10 @@ class SPECANAL(QtGui.QMainWindow):
         ny = num%lx
         if self.data[nx,ny]<0.97: return []
 
-        if DEVELOP: print func_name(), "nx,ny = ", nx, ny
-        if DEVELOP: print func_name(), self.data[nx-1:nx+2, ny-1:ny+2]
-        if DEVELOP: print func_name(), self.data[nx,:]
-        if DEVELOP: print func_name(), self.data[:,ny]
+        if DEVELOP: print(func_name(), "nx,ny = ", nx, ny)
+        if DEVELOP: print(func_name(), self.data[nx-1:nx+2, ny-1:ny+2])
+        if DEVELOP: print(func_name(), self.data[nx,:])
+        if DEVELOP: print(func_name(), self.data[:,ny])
         
         if self.main.cb_fit.isChecked():
             n = max (nmin, int(npar/self.res))
@@ -942,14 +942,14 @@ class SPECANAL(QtGui.QMainWindow):
             nxmax=min(lx,nx+n+1)
             nymin=max(0,ny-n)
             nymax=min(ly,ny+n+1)
-            if DEVELOP: print func_name(), nxmin, nxmax, nymin, nymax
+            if DEVELOP: print(func_name(), nxmin, nxmax, nymin, nymax)
             velos = self.fit_2D_profile(self.data[nxmin:nxmax,nymin:nymax], nxmin, nymin)
         else:
             nxabs = nx - xran
             nyabs = ny - yran
             velos = array([nxabs*self.res,nyabs*self.res]) + self.vshift
         
-        for i,v in enumerate(velos): print "v%d=%.3f"%(i+1,v)
+        for i,v in enumerate(velos): print("v%d=%.3f"%(i+1,v))
         return velos[::-1]
 
     def clean_2D_image(self):

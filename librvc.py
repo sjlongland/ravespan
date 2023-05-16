@@ -201,7 +201,7 @@ class RV_CURVE(QtGui.QMainWindow):
                    "instr": self.instr, 'snrat': self.snrat, "date": self.dates,
                    "w0": self.f0, "wres": self.res, "fname": self.spec_files}
         if key is None:
-            return data_aliases.keys()
+            return list(data_aliases.keys())
         else:
             return data_aliases[key]
 
@@ -235,7 +235,7 @@ class RV_CURVE(QtGui.QMainWindow):
 
     def rescale_errors(self):
         if self.data_sigma is None:
-            print " * Warning! The standard deviation is not yet calculated for this curve. Please fit a model and try again."
+            print(" * Warning! The standard deviation is not yet calculated for this curve. Please fit a model and try again.")
             return 
         errsum = 0.0
         errnum = 0
@@ -245,7 +245,7 @@ class RV_CURVE(QtGui.QMainWindow):
             errsum += sum(vsel)
         avgerr = errsum/errnum
         self.error_scaling = self.data_sigma/avgerr
-        print "Error scaling factor:", self.error_scaling
+        print("Error scaling factor:", self.error_scaling)
         self.main.dataview.scaling_factor_txt.setTitle("esf=%.3g"%self.error_scaling)
         
         self.main.dataview.update_cols("err1", "err2")
@@ -315,7 +315,7 @@ class RV_CURVE(QtGui.QMainWindow):
 
     def toggle_pointed(self, event):
         dpoint, iv = self.get_pointed_point(event.xdata, event.ydata)
-        if DEVELOP: print func_name(), dpoint, iv
+        if DEVELOP: print(func_name(), dpoint, iv)
         res = self.toggle_datapoint(dpoint,iv)
         if res is not None:
             self.plot_data()
@@ -397,11 +397,11 @@ class RV_CURVE(QtGui.QMainWindow):
         if draw and self.anal_1D_data[ic] is not None:
             data, vleft, res, method = self.anal_1D_data[ic]
             self.analysis.plot_cached_data(data, vleft, res, method)
-        print "* spectrum HJD = %f, INSTRUMENT: %s "%(self.hjds[ic],self.instr[ic]),
+        print("* spectrum HJD = %f, INSTRUMENT: %s "%(self.hjds[ic],self.instr[ic]), end=' ')
         if self.ftype[ic] != "bin":
-            print "TYPE:", self.ftype[ic]
+            print("TYPE:", self.ftype[ic])
         else:
-            print
+            print()
         if self.spectrum.cb_show_spec.isChecked():
             self.spectrum.show()        
         self.canvas.setFocus()
@@ -502,7 +502,7 @@ class RV_CURVE(QtGui.QMainWindow):
                 avg_res[instr] = res
                 avg_f0[instr] = f0
                 avg_n[instr] = 1
-        self.instrument_set = avg_res.keys()
+        self.instrument_set = list(avg_res.keys())
 
         for instr in self.instrument_set:
             avg_res[instr] /= avg_n[instr]
@@ -550,7 +550,7 @@ class RV_CURVE(QtGui.QMainWindow):
             else:           self.ftype+=['bin']     
             
         ndata = len(self.hjds)
-        self.hjds = array(map(lambda x: fix_hjd(float(x)),self.hjds))
+        self.hjds = array([fix_hjd(float(x)) for x in self.hjds])
         self.dates = ["%d.%02d.%02d %02d:%02d"%jd2ymd(jd, hms=True)[:-1] for jd in self.hjds]
         for i in range(self.Nv):
             self.v[i]  = zeros(ndata)
@@ -662,7 +662,7 @@ class RV_CURVE(QtGui.QMainWindow):
             cols += ['instr']
         
         if self.main.VERB:
-            print "Writing RVC with the following columns:", cols
+            print("Writing RVC with the following columns:", cols)
 
         with open(filepath,'w') as frvc:
             frvc.write("# "+" ".join(cols)+"\n")
@@ -722,7 +722,7 @@ class RV_CURVE(QtGui.QMainWindow):
         if os.path.exists(filepath):
             fver = 0.0 
             with open(filepath) as frv:
-                c5hjds = array(map(lambda x: float("%.5f"%x), self.hjds))
+                c5hjds = array([float("%.5f"%x) for x in self.hjds])
                 for line in frv:
                     if line[0] == '#':
                         fver = float(line.split()[-1])
@@ -787,7 +787,7 @@ class RV_CURVE(QtGui.QMainWindow):
             lc_path = self.main.lc_dir + "/"+self.obj_fid+".lc"
         if os.path.exists(lc_path):
             self.lc_hjd, self.lc_data = loadtxt(lc_path, usecols=(0,1), unpack=True)
-            self.lc_hjd = array(map(lambda x: fix_hjd(float(x)),self.lc_hjd))
+            self.lc_hjd = array([fix_hjd(float(x)) for x in self.lc_hjd])
         else:
             self.lc_hjd, self.lc_data = empty(0), empty(0)
                 
@@ -834,7 +834,7 @@ class RV_CURVE(QtGui.QMainWindow):
         ve = [self.ve[0][ipoint], self.ve[1][ipoint]]
         vmask = [self.vmask[0][ipoint], self.vmask[1][ipoint]]
 
-        if DEVELOP: print func_name(), num, v, ve, vmask
+        if DEVELOP: print(func_name(), num, v, ve, vmask)
         
         if num is not None:
             return v[num], ve[num], vmask[num]
@@ -1061,7 +1061,7 @@ class RV_CURVE(QtGui.QMainWindow):
         fa = {'mx':mx, 'my':my, 'my_e':my_e, 'funcs_and_stuff': funcs_and_stuff}
         m = mpfit( self.mperrfun_multivelo,  functkw=fa, parinfo=pari, iterfunct=None)
         if (m.status <= 0): 
-            print 'error message = ', m.errmsg
+            print('error message = ', m.errmsg)
         return m.params, m.perror
 
     def prepare_pars_and_funcs_and_stuff(self, for_fit=False, mode="all", exclude=[]):
@@ -1072,7 +1072,7 @@ class RV_CURVE(QtGui.QMainWindow):
         model_mods_org, model_opts = self.main.fitdial.get_rvmods_and_opts()        
         model_mods = set(model_mods_org).difference(exclude)
         
-        if DEVELOP: print func_name(), model_mods_org, model_opts, exclude, model_mods
+        if DEVELOP: print(func_name(), model_mods_org, model_opts, exclude, model_mods)
         
         ith_velo_stuff = [[] for i in range(self.Nv)]
 
@@ -1129,7 +1129,7 @@ class RV_CURVE(QtGui.QMainWindow):
                 param_window = r_[zeros(n_params,bool), array([1,1,1,1,1,0], dtype=bool)]
                 ith_velo_stuff[1].append([fit_thirdbody_A, param_window])
             else:
-                print "Error: option '%s' for 'tb_mode' not implemented."%model_opts['tb_mode']
+                print("Error: option '%s' for 'tb_mode' not implemented."%model_opts['tb_mode'])
                 raise ValueError
         
             n_params = len(pars)        
@@ -1188,7 +1188,7 @@ class RV_CURVE(QtGui.QMainWindow):
 
     def get_model(self, model_x, mode="all", exclude=[]):
         """ Get parameteres and functions for  """
-        if DEVELOP: print func_name(), mode
+        if DEVELOP: print(func_name(), mode)
         if mode == "basic":
             pars, funcs_and_stuff = self.prepare_pars_and_funcs_and_stuff(mode="basic", exclude=exclude)
         elif mode == "additional":
@@ -1206,13 +1206,13 @@ class RV_CURVE(QtGui.QMainWindow):
         pars_and_stuff, funcs_and_stuff, porder_list = self.prepare_pars_and_funcs_and_stuff(for_fit=True)
         fixpars = pars_and_stuff[1]
         if sum(fixpars) == len(fixpars):
-            print "No parameters to fit. Ignoring fitting process."
+            print("No parameters to fit. Ignoring fitting process.")
             return
 
 
         autoswap = self.main.preferences.gopts["rvc"]["cb_autoswap"].isChecked()
         autodisable = self.main.preferences.gopts["rvc"]["cb_autodisable"].isChecked()
-        if DEVELOP: print func_name(), autoswap, autodisable
+        if DEVELOP: print(func_name(), autoswap, autodisable)
         if autoswap or autodisable:
             v0 = self.main.get_v0_from_field()
             d1v1,d2v1 = abs(self.v[0]-self.rvm1), abs(self.v[1]-self.rvm1)
@@ -1243,7 +1243,7 @@ class RV_CURVE(QtGui.QMainWindow):
             mi_sum += sum(m[vi])
 
         if mi_sum < sum(1.0 - fixpars):
-            print "ERROR: number of parameters must not exceed data"
+            print("ERROR: number of parameters must not exceed data")
             return None
 
         data = [x, y, ye]
@@ -1257,18 +1257,18 @@ class RV_CURVE(QtGui.QMainWindow):
         i = 0   
                 
         for ig, group in enumerate(porder_list):
-            print group[0]+":"
+            print(group[0]+":")
             pars_in_order[ig].append([])
             for par in group[1]:
-                print "%7s = %10.7g +- %7.3g"%(par, p[i], pe[i]), "" if fixpars[i] else "*"
+                print("%7s = %10.7g +- %7.3g"%(par, p[i], pe[i]), "" if fixpars[i] else "*")
                 pars_in_order[ig][2].append(p[i])
                 i += 1
             
             if group[0] == "basic":
-                print "basic (calculated):"
+                print("basic (calculated):")
                 self.print_basic_calculated(p, pe, uncertainties=True)
                 
-        print
+        print()
         return pars_in_order
 
     def print_basic_calculated(self, pars, epars, uncertainties=False):
@@ -1303,13 +1303,13 @@ class RV_CURVE(QtGui.QMainWindow):
         q = M2/M1
         
         if uncertainties:
-            print "  Asin(i) = %15s (%s + %s)"%(A.format('.5g'), A1.format('.5g'), A2.format('.5g'))
-            print " Msin3(i) = %15s (%s + %s)"%(M.format('.5g'),M1.format('.5g'),M2.format('.5g'))
-            print "  q = %s"%q.format('.5g')
+            print("  Asin(i) = %15s (%s + %s)"%(A.format('.5g'), A1.format('.5g'), A2.format('.5g')))
+            print(" Msin3(i) = %15s (%s + %s)"%(M.format('.5g'),M1.format('.5g'),M2.format('.5g')))
+            print("  q = %s"%q.format('.5g'))
         else:
-            print "  Asin(i) = %.5g (%.4g + %.4g)"%(A, A1, A2)
-            print " Msin3(i) = %.5g (%.4g + %.4g)"%(M,M1,M2)
-            print "  q = %.5g"%q
+            print("  Asin(i) = %.5g (%.4g + %.4g)"%(A, A1, A2))
+            print(" Msin3(i) = %.5g (%.4g + %.4g)"%(M,M1,M2))
+            print("  q = %.5g"%q)
 
 
     def clear_model(self):
@@ -1437,13 +1437,13 @@ class RV_CURVE(QtGui.QMainWindow):
         if stats and npoints>1:
             rstd = sqrt( sum(map(sum, [iy**2 for iy in yres_on])) / npoints )
             
-            y2sum = asarray(map(sum, [iy**2 for iy in yres_on])) 
-            ylens = asarray(map(len, yres_on)) 
+            y2sum = asarray(list(map(sum, [iy**2 for iy in yres_on]))) 
+            ylens = asarray(list(map(len, yres_on))) 
             istd = sqrt(y2sum / ylens)
             
             self.data_sigma = rstd
-            print "sig = %.1f m/s (%.1f m/s + %.1f m/s)"%(rstd*1000.,
-                                                   istd[0]*1000., istd[1]*1000.)
+            print("sig = %.1f m/s (%.1f m/s + %.1f m/s)"%(rstd*1000.,
+                                                   istd[0]*1000., istd[1]*1000.))
 
             if rstd<1.0:
                 self.std_txt.set_text("%.0f m/s"%(rstd*1000.))

@@ -239,9 +239,9 @@ class RV_MENU(QtGui.QMainWindow):
             if group[0] == "basic":
                 self.set_pars_from_fitting(*group[2])
             elif group[0] == "3rd_body":
-                self.fitdial.set_parvalues_for("3rd_body", dict(zip(*group[1:])))
+                self.fitdial.set_parvalues_for("3rd_body", dict(list(zip(*group[1:]))))
             elif group[0] in ["puls1", "puls2"]:
-                self.fitdial.set_parvalues_for(group[0], dict(zip(*group[1:])))
+                self.fitdial.set_parvalues_for(group[0], dict(list(zip(*group[1:]))))
         self.plot_on_pchange = True        
         self.curve.plot_data()
 
@@ -255,7 +255,7 @@ class RV_MENU(QtGui.QMainWindow):
     def add_masks(self, obj=None, clear=False):
         if obj is None: obj = self.mask_combo
         if clear: obj.clear()
-        masks = self.spectrum.masks.keys()
+        masks = list(self.spectrum.masks.keys())
         for mask in masks:
             obj.addItem(mask)
         self.spectrum.select_mask(masks[0])
@@ -325,7 +325,7 @@ class RV_MENU(QtGui.QMainWindow):
     def add_templates(self, tnum=0):
         if not os.path.exists(self.tpl_dir):
             if tnum==0:
-                print "Warning: directory '%s' doesn't exist."%self.tpl_dir
+                print("Warning: directory '%s' doesn't exist."%self.tpl_dir)
             return
 
         obj = self.tpl_combos[tnum]
@@ -377,8 +377,8 @@ class RV_MENU(QtGui.QMainWindow):
         if stext in self.tpl_files:
             state = self.spectrum.load_template(self.tpl_files[stext],tnum)
             if state<0:
-                print "\nError reading template:", stext,
-                print "=> Template list refresh was forced"
+                print("\nError reading template:", stext, end=' ')
+                print("=> Template list refresh was forced")
                 msgBox = QtGui.QMessageBox.warning(self, "Template error", "Error reading template: " + \
                                           stext + "\nTemplate list refresh was forced.", QtGui.QMessageBox.Ok)
                 self.refreshTemplates()
@@ -454,13 +454,13 @@ class RV_MENU(QtGui.QMainWindow):
         if time.time() - self.ca_time_clicked < 1.0:
             self.ca_started = True
             self.calc_all_butt.setEnabled(False)
-            print "... and started."
+            print("... and started.")
             resolution, method, use_norm, sd_mode = self.get_options_for_vcalc()
             self.curve.calculate_all(method, resolution, use_norm, sd_mode=sd_mode)
             self.calc_all_butt.setEnabled(True)
             self.ca_started = False
         else:
-            print "Calcualte All enabled... (click again within 1 second to start)"
+            print("Calcualte All enabled... (click again within 1 second to start)")
             self.ca_time_clicked = time.time()
             def gt_fun():
                 for x in arange(1.0,0.0,-0.1):
@@ -508,7 +508,7 @@ class RV_MENU(QtGui.QMainWindow):
         self.obj_spin["per"].setSingleStep(10e-6*val**2)
         
     def aop_changed(self, val):
-        print "AOP changed"
+        print("AOP changed")
         if  val < 0.0 or val > dpi:
             self.obj_spin["aop"].blockSignals(True)
             self.obj_spin["aop"].setValue(val%dpi)
@@ -516,7 +516,7 @@ class RV_MENU(QtGui.QMainWindow):
         self.param_changed()
         
     def param_changed(self):
-        if DEVELOP: print "PARAM CHANGED"
+        if DEVELOP: print("PARAM CHANGED")
         if self.plot_on_pchange:
             self.curve.plot_data()
 
@@ -524,12 +524,12 @@ class RV_MENU(QtGui.QMainWindow):
         self.instr_name.setEnabled(True)
         self.instr_name.setText(instr)
         if self.cb_instr_mask.isChecked():
-            print instr
-            print self.instr_mask_dict
+            print(instr)
+            print(self.instr_mask_dict)
             instr = str(instr).strip()
-            if instr in self.instr_mask_dict.keys():
+            if instr in list(self.instr_mask_dict.keys()):
                 mask = self.instr_mask_dict[instr]
-                print mask + " selected"
+                print(mask + " selected")
                 self.set_mask(mask)
 
     def set_date(self, jd):
@@ -555,14 +555,14 @@ class RV_MENU(QtGui.QMainWindow):
 
         self.obj_path_field.setText("")
 
-        for key,value in data["main_pars"].iteritems():
+        for key,value in data["main_pars"].items():
             if key in ["per","t0","v0","k1","k2","ecc","aop"]:
-                if DEVELOP: print "set_field", key
+                if DEVELOP: print("set_field", key)
                 self.obj_spin[key].blockSignals(True)
                 self.obj_spin[key].setValue(value)
                 self.obj_spin[key].blockSignals(False)
         
-        for key,value in data["general"].iteritems():
+        for key,value in data["general"].items():
             if key == 'id':     
                 self.obj_id_field.setText(value)
             elif key == 'data':
@@ -750,7 +750,7 @@ class RV_MENU(QtGui.QMainWindow):
         with open(specpath,'w') as fspec:
             for x,s in c_[xspec,spec]:
                 fspec.write("%10.4f %8.4f\n"%(x,s))
-            print "File written to:", specpath
+            print("File written to:", specpath)
 
     def saveSpectrum(self):
         mode = "normalized" if self.cb_normalization.isChecked() else "raw"
@@ -781,9 +781,9 @@ class RV_MENU(QtGui.QMainWindow):
                     lev = 0.04
                     if sum(fl2l1<lev)>0:
                         fl2l1[fl2l1<lev] = lev
-                        print "\n*** WARNING! Values of normalization function lower than 0.04 were converted to 0.04\n"
-                    print "Some values of normalization function across spectrum printed below:"
-                    print fl2l1[::10000]
+                        print("\n*** WARNING! Values of normalization function lower than 0.04 were converted to 0.04\n")
+                    print("Some values of normalization function across spectrum printed below:")
+                    print(fl2l1[::10000])
                 if num == 0:
                     renorm_spec = (spec-1.)*(fl2l1+1.) + 1.
                 else:
@@ -792,7 +792,7 @@ class RV_MENU(QtGui.QMainWindow):
                 renorm_spec = spec
             for x,s in c_[xspec,renorm_spec]:
                 fspec.write("%10.4f %8.4f\n"%(x,s))
-            print "File written to:", specpath
+            print("File written to:", specpath)
         
     
     def rescaleErrors(self):

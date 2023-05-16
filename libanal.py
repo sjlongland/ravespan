@@ -78,8 +78,8 @@ class SPECANAL(QtWidgets.QMainWindow):
         self.bf_slider = None
 
         self.bf_slider = QtWidgets.QSlider(QtCore.Qt.Vertical)
-        self.bf_slider.setRange(self.bfsmooth_min/self.bfsmooth_step, self.bfsmooth_max/self.bfsmooth_step)
-        self.bf_slider.setValue(self.bfsmooth_sig/self.bfsmooth_step)
+        self.bf_slider.setRange(int(self.bfsmooth_min/self.bfsmooth_step), int(self.bfsmooth_max/self.bfsmooth_step))
+        self.bf_slider.setValue(int(self.bfsmooth_sig/self.bfsmooth_step))
         self.bf_slider.setTracking(True)
         self.bf_slider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.bf_slider.setFixedWidth(30)

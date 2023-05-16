@@ -85,7 +85,7 @@ class SPECANAL(QtWidgets.QMainWindow):
         self.bf_slider.setFixedWidth(30)
         self.bf_slider.setEnabled(False)
         self.bf_slider.setToolTip("Set Broadening Function smoothing level.\nWorks only if BF method results are present.")
-        self.connect(self.bf_slider, QtCore.SIGNAL('valueChanged(int)'), self.bf_slider_event)
+        self.bf_slider.valueChanged.connect(self.bf_slider_event)
         
         self.bf_value_label=QtWidgets.QLabel('{0:.2f}'.format(self.bfsmooth_sig),self.main_frame)
         font = self.bf_value_label.font()
@@ -119,24 +119,24 @@ class SPECANAL(QtWidgets.QMainWindow):
         for i in range(self.Nv):
             self.vfixed += [QtWidgets.QCheckBox(str(i+1))]
             self.vfixed[i].setToolTip('Fix velocity #%d'%(i+1))
-            self.connect(self.vfixed[i], QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
+            self.vfixed[i].clicked.connect(self.canvas.setFocus)
 
         self.cb_mark_rvs = QtWidgets.QCheckBox("RVs")
         self.cb_mark_rvs.setChecked(True)
         self.cb_mark_rvs.setToolTip('Mark components radial velocities.')
-        self.connect(self.cb_mark_rvs, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
+        self.cb_mark_rvs.clicked.connect(self.canvas.setFocus)
 
         self.cb_show_fits = QtWidgets.QCheckBox("Fits")
         self.cb_show_fits.setChecked(True)
         self.cb_show_fits.setToolTip('Show fit curves.')
-        self.connect(self.cb_show_fits, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
+        self.cb_show_fits.clicked.connect(self.canvas.setFocus)
 
-        self.connect(self.cb_mark_rvs, QtCore.SIGNAL('stateChanged(int)'), self.show_velos)
-        self.connect(self.cb_show_fits, QtCore.SIGNAL('stateChanged(int)'), self.show_fits)
+        self.cb_mark_rvs.stateChanged.connect(self.show_velos)
+        self.cb_show_fits.stateChanged.connect(self.show_fits)
         
         self.cb_manual = QtWidgets.QCheckBox("Manual")
         self.cb_manual.setToolTip('Allow manual setting of velocities.')
-        self.connect(self.cb_manual, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
+        self.cb_manual.clicked.connect(self.canvas.setFocus)
         
         self.hbox = QtWidgets.QHBoxLayout()
         v1box = QtWidgets.QVBoxLayout()

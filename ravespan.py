@@ -838,7 +838,7 @@ class RV_MENU(QtWidgets.QMainWindow):
                 taction = QtWidgets.QAction(item_obj, self)
                 if len(menu_item)>3:
                     taction.setStatusTip(menu_item[3])
-                self.connect(taction, QtCore.SIGNAL('triggered()'), item_fun)
+                taction.triggered.connect(item_fun)
                 menu_obj.addAction(taction)
             elif item_type == 's':
                 menu_obj.addSeparator()
@@ -869,7 +869,7 @@ class RV_MENU(QtWidgets.QMainWindow):
                 if shortcut is not None:
                     obj.setShortcut(shortcut)
                 obj.setStatusTip(statustip)
-                self.connect(obj, QtCore.SIGNAL('triggered()'), eventfun)
+                obj.triggered.connect(eventfun)
                 mbFile.addAction(obj)
 
         self.instruments = InstrumentDialog(self)
@@ -925,8 +925,8 @@ class RV_MENU(QtWidgets.QMainWindow):
         idlabel = QtWidgets.QLabel('ID:', self.main_widget)
         self.obj_id_field = QtWidgets.QLineEdit("", self.main_widget)
         pb_browse_obj = QtWidgets.QPushButton("&Browse")
-        self.connect(pb_browse_obj, QtCore.SIGNAL('clicked()'), self.openObject)
-        self.connect(self.obj_id_field, QtCore.SIGNAL('textChanged(QString)'), self.id_changed)
+        pb_browse_obj.clicked.connect(self.openObject)
+        self.obj_id_field.textChanged.connect(self.id_changed)
         self.id_grid.addWidget(idlabel,1,1)
         self.id_grid.addWidget(self.obj_id_field,1,2)
         self.id_grid.addWidget(pb_browse_obj,1,3)
@@ -934,7 +934,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         # PATH
         pathlabel = QtWidgets.QLabel('data:', self.main_widget)
         self.obj_path_field = QtWidgets.QPushButton("", self.main_widget)
-        self.connect(self.obj_path_field, QtCore.SIGNAL('clicked()'), self.browse_data)
+        self.obj_path_field.clicked.connect(self.browse_data)
         self.id_grid.addWidget(pathlabel,2,1)
         self.id_grid.addWidget(self.obj_path_field,2,2,1,2)
 
@@ -943,27 +943,27 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.object_layout.addLayout(self.ephem_grid)
         self.cb_per = QtWidgets.QCheckBox("P:", self.main_widget)
         self.obj_spin["per"] = set_QSpin(self,1.0,rmin=0.00001,rmax=99999.,step=0.1,decimals=7)
-        self.connect(self.obj_spin["per"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
-        self.connect(self.obj_spin["per"], QtCore.SIGNAL('editingFinished()'), self.per_changed)
+        self.obj_spin["per"].valueChanged.connect(self.param_changed)
+        self.obj_spin["per"].editingFinished.connect(self.per_changed)
         self.ephem_grid.addWidget(self.cb_per,1,1)
         self.ephem_grid.addWidget(self.obj_spin["per"],1,2,1,2)
 
         self.cb_ecc = QtWidgets.QCheckBox('ecc:', self.main_widget)
         self.obj_spin["ecc"] = set_QSpin(self,0.0,rmin=0.0,rmax=0.98,step=0.01,decimals=5)
-        self.connect(self.obj_spin["ecc"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
+        self.obj_spin["ecc"].valueChanged.connect(self.param_changed)
         self.ephem_grid.addWidget(self.cb_ecc,1,4)
         self.ephem_grid.addWidget(self.obj_spin["ecc"],1,5)
 
         # EPHEMERIS - HJD0
         self.cb_t0 = QtWidgets.QCheckBox('T0:', self.main_widget)
         self.obj_spin["t0"] = set_QSpin(self,5000.0,rmin=0.0,rmax=9999.99999,step=0.1,decimals=5)
-        self.connect(self.obj_spin["t0"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
+        self.obj_spin["t0"].valueChanged.connect(self.param_changed)
         self.ephem_grid.addWidget(self.cb_t0,2,1)
         self.ephem_grid.addWidget(self.obj_spin["t0"],2,2,1,2)
 
         self.cb_aop = QtWidgets.QCheckBox('aop:', self.main_widget)
         self.obj_spin["aop"] = set_QSpin(self,0.0,rmin=-0.1,rmax=dpi+0.1,step=0.1,decimals=5)
-        self.connect(self.obj_spin["aop"], QtCore.SIGNAL('valueChanged(double)'), self.aop_changed)
+        self.obj_spin["aop"].valueChanged.connect(self.aop_changed)
         self.ephem_grid.addWidget(self.cb_aop,2,4)
         self.ephem_grid.addWidget(self.obj_spin["aop"],2,5)
 
@@ -971,16 +971,16 @@ class RV_MENU(QtWidgets.QMainWindow):
         # ORBIT
         self.cb_v0 = QtWidgets.QCheckBox('V0:', self.main_widget)
         self.obj_spin["v0"] = set_QSpin(self,0.0,rmin=-999,rmax=999,step=0.5, decimals=3)
-        self.connect(self.obj_spin["v0"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
+        self.obj_spin["v0"].valueChanged.connect(self.param_changed)
         self.ephem_grid.addWidget(self.cb_v0,3,4)
         self.ephem_grid.addWidget(self.obj_spin["v0"],3,5)
 
         self.cb_k1 = QtWidgets.QCheckBox('K1:', self.main_widget)
         self.obj_spin["k1"] = set_QSpin(self,100.0,rmin=0.0,rmax=499.9999,step=0.2, decimals=4)
-        self.connect(self.obj_spin["k1"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
+        self.obj_spin["k1"].valueChanged.connect(self.param_changed)
         self.cb_k2 = QtWidgets.QCheckBox('K2:', self.main_widget)
         self.obj_spin["k2"] = set_QSpin(self,50.0,rmin=0.0,rmax=4999.9999,step=0.2, decimals=4)
-        self.connect(self.obj_spin["k2"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
+        self.obj_spin["k2"].valueChanged.connect(self.param_changed)
         self.ephem_grid.addWidget(self.cb_k1,3,1)
         self.ephem_grid.addWidget(self.obj_spin["k1"],3,2)
         self.ephem_grid.addWidget(self.cb_k2,4,1)
@@ -1000,12 +1000,12 @@ class RV_MENU(QtWidgets.QMainWindow):
         pb_fit_more.setMaximumWidth(self.smallbutton_width)
 
         self.fitdial = FittingDialog(self)
-        self.connect(pb_fit_more, QtCore.SIGNAL('clicked()'), self.fitdial.show_or_activate)
+        pb_fit_more.clicked.connect(self.fitdial.show_or_activate)
 
         pb_fit_params = QtWidgets.QPushButton("Fit")
         pb_fit_params.setStatusTip("Fit selected parameters to the data.")
 
-        self.connect(pb_fit_params, QtCore.SIGNAL('clicked()'), self.fit_params)
+        pb_fit_params.clicked.connect(self.fit_params)
         self.ephem_grid.addWidget(pb_fit_more,4,4)
         self.ephem_grid.addWidget(pb_fit_params,4,5)
 
@@ -1039,7 +1039,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         for method in self.RVMethods:
             self.method_combo.addItem(method.upper())
 
-        self.connect(self.method_combo, QtCore.SIGNAL('currentIndexChanged(QString)'), self.method_activated)
+        self.method_combo.currentIndexChanged.connect(self.method_activated)
         
         self.rv_calc_grid.addWidget(self.method_combo,self.grid_row,1,1,2)
         self.rv_calc_grid.addWidget(self.t1_radio,self.grid_row+1,1,1,1)
@@ -1060,11 +1060,11 @@ class RV_MENU(QtWidgets.QMainWindow):
 
         self.tdialog = TemplateDialog(self)
 
-        self.connect(self.tpl_buttons[0], QtCore.SIGNAL('clicked()'), lambda: self.template_pressed(0))
-        self.connect(self.tpl_buttons[1], QtCore.SIGNAL('clicked()'), lambda: self.template_pressed(1))
+        self.tpl_buttons[0].clicked.connect(lambda: self.template_pressed(0))
+        self.tpl_buttons[1].clicked.connect(lambda: self.template_pressed(1))
         
-        self.connect(self.tpl_combos[0], QtCore.SIGNAL('currentIndexChanged(QString)'), lambda s: self.template_activated(s,0))
-        self.connect(self.tpl_combos[1], QtCore.SIGNAL('currentIndexChanged(QString)'), lambda s: self.template_activated(s,1))
+        self.tpl_combos[0].currentIndexChanged.connect(lambda s: self.template_activated(s,0))
+        self.tpl_combos[1].currentIndexChanged.connect(lambda s: self.template_activated(s,1))
         
         self.rv_calc_grid.addWidget(self.tpl_buttons[0],self.grid_row,3)
         self.rv_calc_grid.addWidget(self.tpl_buttons[1],self.grid_row+1,3)
@@ -1091,7 +1091,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         m_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignCenter)
         self.mask_combo = QtWidgets.QComboBox(self)
         self.add_masks(self.mask_combo)
-        self.connect(self.mask_combo, QtCore.SIGNAL('currentIndexChanged(QString)'), self.mask_activated)
+        self.mask_combo.currentIndexChanged.connect(self.mask_activated)
         self.rv_calc_grid.addWidget(m_label,self.grid_row+1,4,1,2)
         self.rv_calc_grid.addWidget(self.mask_combo,self.grid_row+1,6,1,2)
         self.grid_row += 2
@@ -1110,10 +1110,10 @@ class RV_MENU(QtWidgets.QMainWindow):
         next_butt.setMaximumWidth(self.smallbutton_width)
         prev_butt.setMaximumWidth(self.smallbutton_width)
         self.calc_all_butt = QtWidgets.QPushButton("Calc &All",self)
-        self.connect(calc_one_butt, QtCore.SIGNAL('clicked()'), self.calc_one_pressed)
-        self.connect(prev_butt, QtCore.SIGNAL('clicked()'), self.curve.select_prev_datapoint)
-        self.connect(next_butt, QtCore.SIGNAL('clicked()'), self.curve.select_next_datapoint)
-        self.connect(self.calc_all_butt, QtCore.SIGNAL('clicked()'), self.calc_all_pressed)
+        calc_one_butt.clicked.connect(self.calc_one_pressed)
+        prev_butt.clicked.connect(self.curve.select_prev_datapoint)
+        next_butt.clicked.connect(self.curve.select_next_datapoint)
+        self.calc_all_butt.clicked.connect(self.calc_all_pressed)
         calc_one_butt.setStatusTip('Calculate RVs for selected point only.')
         prev_butt.setStatusTip('Go to previous spectrum.')
         next_butt.setStatusTip('Go to next spectrum.')
@@ -1132,7 +1132,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         disent_butt = QtWidgets.QPushButton("SD",self)
         disent_butt.setMaximumWidth(66)
         disent_butt.setStatusTip("Show spectral disentangling window.")
-        self.connect(disent_butt, QtCore.SIGNAL('clicked()'), self.sd_dialog.show_or_activate)
+        disent_butt.clicked.connect(self.sd_dialog.show_or_activate)
         self.rv_calc_grid.addWidget(disent_butt,self.grid_row+1,1,1,2)
 
         self.grid_row += 2
@@ -1162,7 +1162,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         
         self.pb_show_rv = QtWidgets.QPushButton('Show RV')
         self.pb_show_rv.setStatusTip("Show RV Curve window.")
-        self.connect(self.pb_show_rv, QtCore.SIGNAL('clicked()'), self.do_show_rv)
+        self.pb_show_rv.clicked.connect(self.do_show_rv)
 
         self.show_grid.addWidget(self.pb_show_rv,1,1,1,2)
 
@@ -1171,14 +1171,14 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.cb_show_model = None
         self.cb_model_id = QtWidgets.QCheckBox("Model ID")
         self.cb_model_id.setStatusTip("Use model for component identification.")
-        self.connect(self.cb_model_id, QtCore.SIGNAL('stateChanged(int)'), lambda x: 0)
+        self.cb_model_id.stateChanged.connect(lambda x: 0)
         self.cb_model_id.setEnabled(False)
 
         self.show_grid.addWidget(self.cb_model_id,2,1,1,2)
 
         self.pb_show_spec = QtWidgets.QPushButton('Spectrum')
         self.pb_show_spec.setStatusTip("Show Spectrum window.")
-        self.connect(self.pb_show_spec, QtCore.SIGNAL('clicked()'), self.do_show_spec)
+        self.pb_show_spec.clicked.connect(self.do_show_spec)
 
         self.show_grid.addWidget(self.pb_show_spec,1,3,1,2)
 
@@ -1190,18 +1190,18 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.cb_normalization=QtWidgets.QCheckBox("Normalized")
         self.cb_normalization.setChecked(self.spectrum.cb_normalization.isChecked())
         self.cb_normalization.setStatusTip("Toggle normalization of selected spectrum.")
-        self.connect(self.cb_normalization, QtCore.SIGNAL('stateChanged(int)'), self.sync_normalization)
+        self.cb_normalization.stateChanged.connect(self.sync_normalization)
 
         self.show_grid.addWidget(self.cb_normalization,2,3,1,2)
 
         self.pb_show_anal = QtWidgets.QPushButton('Analysis')
         self.pb_show_anal.setStatusTip('Show Analysis window.')
-        self.connect(self.pb_show_anal, QtCore.SIGNAL('clicked()'), self.do_show_anal)
+        self.pb_show_anal.clicked.connect(self.do_show_anal)
         self.show_grid.addWidget(self.pb_show_anal,1,5,1,2)
 
         self.cb_ca_update=QtWidgets.QCheckBox('CA update')  
         self.cb_ca_update.setStatusTip('Update Analysis while calculating all points.')
-        self.connect(self.cb_ca_update, QtCore.SIGNAL('stateChanged(int)'), self.ca_update_changed)
+        self.cb_ca_update.stateChanged.connect(self.ca_update_changed)
 
         self.show_grid.addWidget(self.cb_ca_update,2,5,1,2)
 
@@ -1210,15 +1210,15 @@ class RV_MENU(QtWidgets.QMainWindow):
         """ GUI BOTTOM BUTTONS """
         save_butt = QtWidgets.QPushButton("&Save",self)
         save_butt.setStatusTip('Save object data and RV curve.')
-        self.connect(save_butt, QtCore.SIGNAL('clicked()'), self.saveObject)
+        save_butt.clicked.connect(self.saveObject)
         self.show_grid.addWidget(save_butt,3,1,1,2)
         prefs_butt = QtWidgets.QPushButton("&Prefs",self)
         prefs_butt.setStatusTip('Edit preferences.')
-        self.connect(prefs_butt, QtCore.SIGNAL('clicked()'), self.preferences.show_or_activate)
+        prefs_butt.clicked.connect(self.preferences.show_or_activate)
         self.show_grid.addWidget(prefs_butt,3,3,1,2)
         quit_butt = QtWidgets.QPushButton("&Quit",self)
         quit_butt.setStatusTip('Quit the application.')
-        self.connect(quit_butt, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        quit_butt.clicked.connect(QtCore.SLOT('close()'))
         self.show_grid.addWidget(quit_butt,3,5,1,2)
 
 

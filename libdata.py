@@ -97,7 +97,7 @@ class DATA_VIEW(QtWidgets.QMainWindow):
                 if shortcut is not None:
                     obj.setShortcut(shortcut)
                 obj.setStatusTip(statustip)
-                self.connect(obj, QtCore.SIGNAL('triggered()'), eventfun)
+                obj.triggered.connect(eventfun)
                 self.mbMenu["main"].addAction(obj)
 
         self.mbMenu["partial"] = self.menubar.addMenu('Partial RVC')
@@ -116,7 +116,7 @@ class DATA_VIEW(QtWidgets.QMainWindow):
             else:
                 name, eventfun = filemenu_items[fmitem]
                 obj = QtWidgets.QAction(name, self)
-                self.connect(obj, QtCore.SIGNAL('triggered()'), eventfun)
+                obj.triggered.connect(eventfun)
                 self.mbMenu["partial"].addAction(obj)
 
         self.morder = {}
@@ -146,7 +146,7 @@ class DATA_VIEW(QtWidgets.QMainWindow):
             else:
                 name, eventfun, checked = self.mitems["tools"][mitem]
                 self.mobjects["tools"][mitem] = QtWidgets.QAction(name, self)
-                self.connect(self.mobjects["tools"][mitem], QtCore.SIGNAL('triggered()'), eventfun)
+                self.mobjects["tools"][mitem].triggered.connect(eventfun)
                 if checked is not None:
                     self.mobjects["tools"][mitem].setCheckable(True)
                     self.col_show["date"] = checked
@@ -181,8 +181,8 @@ class DATA_VIEW(QtWidgets.QMainWindow):
         
         self.table = self.initialize_table()
                 
-        self.connect(self.table, QtCore.SIGNAL("cellDoubleClicked(int,int)"), self.point_selected)
-        self.connect(self.table, QtCore.SIGNAL("cellClicked(int,int)"), self.point_selected_click)
+        self.table.cellDoubleClicked.connect(self.point_selected)
+        self.table.cellClicked.connect(self.point_selected_click)
         
         vbox.addWidget(self.table)
         

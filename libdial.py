@@ -76,7 +76,7 @@ class InstrumentDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         vlayout.addWidget(button_box)
 
         self.setLayout(vlayout)
@@ -95,7 +95,7 @@ class InstrumentDialog(QtWidgets.QDialog):
         for i, instr in enumerate(instr_list):
             chkbox = QtWidgets.QCheckBox()
             chkbox.setChecked(1)
-            self.connect(chkbox, QtCore.SIGNAL('stateChanged(int)'), self.main.curve.plot_data)
+            chkbox.stateChanged.connect(self.main.curve.plot_data)
             self.checkboxes.append(chkbox)
             self.instr_table.setCellWidget(i, 1, chkbox)
                         
@@ -164,14 +164,14 @@ class FittingDialog(QtWidgets.QDialog):
         self.rvmod_parorder = {} 
 
         self.rvmodifiers_cb["3rd_body"] = QtWidgets.QCheckBox("third body")
-        self.connect(self.rvmodifiers_cb["3rd_body"], QtCore.SIGNAL('toggled(bool)'), self.main.param_changed)
+        self.rvmodifiers_cb["3rd_body"].toggled.connect(self.main.param_changed)
         
         rvmod_grid["3rd_body"] = QtWidgets.QGridLayout()
         
         tb_type_label = QtWidgets.QLabel("Type:")
         self.tb_type = QtWidgets.QComboBox()
         self.tb_type.addItems(["12+3","1+3", "2+3"])
-        self.connect(self.tb_type, QtCore.SIGNAL('currentIndexChanged(QString)'), self.tb_mode_change)
+        self.tb_type.currentIndexChanged.connect(self.tb_mode_change)
         rvmod_grid["3rd_body"].addWidget(tb_type_label,0,1)
         rvmod_grid["3rd_body"].addWidget(self.tb_type,0,2,1,2)
         
@@ -192,7 +192,7 @@ class FittingDialog(QtWidgets.QDialog):
             self.plims_d[key] = [minval, maxval]
             self.tb_cb[key] = QtWidgets.QCheckBox(text, self)
             self.tb_spin[key] = set_QSpin(self, val, rmin=minval, rmax=maxval, step=step,decimals=decis)
-            self.connect(self.tb_spin[key], QtCore.SIGNAL('valueChanged(double)'), self.tb_param_changed)
+            self.tb_spin[key].valueChanged.connect(self.tb_param_changed)
 
         self.tb_cb['k12'].setChecked(True)
 
@@ -216,7 +216,7 @@ class FittingDialog(QtWidgets.QDialog):
 
         for i, ipulsmod in enumerate(["puls1", "puls2"]):
             self.rvmodifiers_cb[ipulsmod] = QtWidgets.QCheckBox("pulsations - "+chr(65+i))
-            self.connect(self.rvmodifiers_cb[ipulsmod], QtCore.SIGNAL('toggled(bool)'), self.main.param_changed)
+            self.rvmodifiers_cb[ipulsmod].toggled.connect(self.main.param_changed)
             rvmod_grid[ipulsmod] = QtWidgets.QGridLayout()
 
             for par in [['per', "P:",   10., 0.001,  39999., 0.01, 8], \
@@ -227,14 +227,14 @@ class FittingDialog(QtWidgets.QDialog):
                 self.puls_cb[i][key] = QtWidgets.QCheckBox(text, self)
                 self.puls_spin[i][key] = set_QSpin(self, val, rmin=minval, rmax=maxval, \
                                                    step=step, decimals=decis)
-                self.connect(self.puls_spin[i][key], QtCore.SIGNAL('valueChanged(double)'), fun_puls_event[i])
+                self.puls_spin[i][key].valueChanged.connect(fun_puls_event[i])
             self.plims_d["a0"] = [-9.99, 9.99]
 
             self.puls_cb[i]['t0'].setChecked(True)
             pulsnharm_lab = QtWidgets.QLabel('nharm:', self)
             self.pulsnharm_spin[i] = set_QIntSpin(self,2,rmin=0,rmax=9)
             self.pulsnharm_spin[i].setMaximumWidth(90)
-            self.connect(self.pulsnharm_spin[i], QtCore.SIGNAL('valueChanged(int)'), fun_puls_event[i])
+            self.pulsnharm_spin[i].valueChanged.connect(fun_puls_event[i])
             self.puls_clear_butt[i] = QtWidgets.QPushButton("Clear")
             self.puls_clear_butt[i].setMaximumWidth(70)
             self.puls_clear_butt[i].setAutoDefault(False)
@@ -247,8 +247,8 @@ class FittingDialog(QtWidgets.QDialog):
             rvmod_grid[ipulsmod].addWidget(self.pulsnharm_spin[i],3,2)
             rvmod_grid[ipulsmod].addWidget(self.puls_clear_butt[i],3,3)
 
-        self.connect(self.puls_clear_butt[0], QtCore.SIGNAL('clicked()'), self.clear_puls_coefficients_1)
-        self.connect(self.puls_clear_butt[1], QtCore.SIGNAL('clicked()'), self.clear_puls_coefficients_2)
+        self.puls_clear_butt[0].clicked.connect(self.clear_puls_coefficients_1)
+        self.puls_clear_butt[1].clicked.connect(self.clear_puls_coefficients_2)
         
         
         for rvmod in self.rvmod_order:
@@ -260,7 +260,7 @@ class FittingDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         close_button.setAutoDefault(False)
         vlayout.addWidget(button_box)
 
@@ -531,8 +531,8 @@ class TemplateDialog(QtWidgets.QDialog):
         self.tmpl=[]
         self.tmpl += [QtWidgets.QRadioButton("&1")]
         self.tmpl += [QtWidgets.QRadioButton("&2")]
-        self.connect(self.tmpl[0], QtCore.SIGNAL('toggled(bool)'), self.switch_template)
-        self.connect(self.tmpl[1], QtCore.SIGNAL('toggled(bool)'), self.switch_template)
+        self.tmpl[0].toggled.connect(self.switch_template)
+        self.tmpl[1].toggled.connect(self.switch_template)
 
         button_group = QtWidgets.QButtonGroup()        
         button_group.addButton(self.tmpl[0])
@@ -561,24 +561,24 @@ class TemplateDialog(QtWidgets.QDialog):
         self.pb_add_interpolated.setToolTip("<html>Will add interpolated template to the template list. The more parameters differ from the grid values the more time it will take to make interpolated spectrum.</html>")
         self.pb_add_interpolated.setMaximumWidth(60)
         self.pb_add_interpolated.setEnabled(False)
-        self.connect(self.pb_add_interpolated, QtCore.SIGNAL('clicked()'), self.add_interpolated )
+        self.pb_add_interpolated.clicked.connect(self.add_interpolated )
         
         self.fill_combos()
 
-        self.connect(self.combos['teff'], QtCore.SIGNAL('activated(QString)'), lambda v: self.combo_event('teff',v))
-        self.connect(self.combos['logg'], QtCore.SIGNAL('activated(QString)'), lambda v: self.combo_event('logg',v))
-        self.connect(self.combos['feh'], QtCore.SIGNAL('activated(QString)'), lambda v: self.combo_event('feh',v))
-        self.connect(self.rspin, QtCore.SIGNAL('valueChanged(double)'), self.rot_changed)
+        self.combos['teff'].activated.connect(lambda v: self.combo_event('teff',v))
+        self.combos['logg'].activated.connect(lambda v: self.combo_event('logg',v))
+        self.combos['feh'].activated.connect(lambda v: self.combo_event('feh',v))
+        self.rspin.valueChanged.connect(self.rot_changed)
 
         self.iname = QtWidgets.QLineEdit()
         self.iname.setToolTip("Interpolated spectrum name.")
-        self.connect(self.iname, QtCore.SIGNAL('textChanged(QString)'), self.correct_iname)
+        self.iname.textChanged.connect(self.correct_iname)
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
-        self.connect(self.apply_button, QtCore.SIGNAL('clicked()'), self.apply_params)
+        self.apply_button.clicked.connect(self.apply_params)
         vbotlayout.addWidget(button_box)
 
         layout.addWidget(tlabel, 1, 1)
@@ -601,9 +601,9 @@ class TemplateDialog(QtWidgets.QDialog):
                 self.i_spins[p] = set_QSpin(self, 0.)
                 self.i_spins[p].setEnabled(False)
 
-        self.connect(self.i_spins['teff'], QtCore.SIGNAL('valueChanged(double)'), lambda v: self.ispin_event('teff',v))
-        self.connect(self.i_spins['logg'], QtCore.SIGNAL('valueChanged(double)'), lambda v: self.ispin_event('logg',v))
-        self.connect(self.i_spins['feh'], QtCore.SIGNAL('valueChanged(double)'), lambda v: self.ispin_event('feh',v))
+        self.i_spins['teff'].valueChanged.connect(lambda v: self.ispin_event('teff',v))
+        self.i_spins['logg'].valueChanged.connect(lambda v: self.ispin_event('logg',v))
+        self.i_spins['feh'].valueChanged.connect(lambda v: self.ispin_event('feh',v))
 
 
         layout.addWidget(self.i_spins['teff'], 1, 3)
@@ -1027,19 +1027,19 @@ class PreferencesDialog(QtWidgets.QDialog):
                 self.glayouts[section].addWidget(self.gopts[section][item],x,y,w,h)
 
 
-        self.connect(self.gopts["gen"]["cb_update_plots_on_CA"], QtCore.SIGNAL('stateChanged(int)'), self.ca_update_changed)
-        self.connect(self.gopts["spec"]["cb_show_mask"], QtCore.SIGNAL('stateChanged(int)'), self.set_mask_visibility)
-        self.connect(self.gopts["spec"]["cb_only_masked"], QtCore.SIGNAL('stateChanged(int)'), self.main.spectrum.plot_data)
-        self.connect(self.gopts["rvc"]["cb_show_err"], QtCore.SIGNAL('stateChanged(int)'), self.set_err_visibility)
-        self.connect(self.gopts["anal"]["cb_model_id"], QtCore.SIGNAL('stateChanged(int)'), self.sync_model_v)
-        self.connect(self.gopts["anal"]["cb_model_v"], QtCore.SIGNAL('stateChanged(int)'), self.sync_model_id)
-        self.connect(self.gopts["spec"]["pb_update_spec"], QtCore.SIGNAL('clicked()'), self.main.spectrum.plot_data)
-        self.connect(self.gopts["norm"]["pb_update_spec"], QtCore.SIGNAL('clicked()'), self.update_norm_spec)
+        self.gopts["gen"]["cb_update_plots_on_CA"].stateChanged.connect(self.ca_update_changed)
+        self.gopts["spec"]["cb_show_mask"].stateChanged.connect(self.set_mask_visibility)
+        self.gopts["spec"]["cb_only_masked"].stateChanged.connect(self.main.spectrum.plot_data)
+        self.gopts["rvc"]["cb_show_err"].stateChanged.connect(self.set_err_visibility)
+        self.gopts["anal"]["cb_model_id"].stateChanged.connect(self.sync_model_v)
+        self.gopts["anal"]["cb_model_v"].stateChanged.connect(self.sync_model_id)
+        self.gopts["spec"]["pb_update_spec"].clicked.connect(self.main.spectrum.plot_data)
+        self.gopts["norm"]["pb_update_spec"].clicked.connect(self.update_norm_spec)
         for field in ["ispin_binfill", "ispin_mode_histbins"]:
-            self.connect(self.gopts["norm"][field], QtCore.SIGNAL('valueChanged(int)'), self.clear_db_norm)
-        self.connect(self.gopts["norm"]["cb_norm_at"], QtCore.SIGNAL('stateChanged(int)'), self.clear_db_norm)
-        self.connect(self.gopts["norm"]["spin_norm_at"], QtCore.SIGNAL('valueChanged(double)'), self.clear_db_norm_at)
-        self.connect(self.gopts["advspec"]["ispin_nkeepsvd"], QtCore.SIGNAL('valueChanged(int)'), self.update_specdb_svd_max)
+            self.gopts["norm"][field].valueChanged.connect(self.clear_db_norm)
+        self.gopts["norm"]["cb_norm_at"].stateChanged.connect(self.clear_db_norm)
+        self.gopts["norm"]["spin_norm_at"].valueChanged.connect(self.clear_db_norm_at)
+        self.gopts["advspec"]["ispin_nkeepsvd"].valueChanged.connect(self.update_specdb_svd_max)
 
         for keytab,groups in self.group_placement.items():
             for gid in groups:
@@ -1054,8 +1054,8 @@ class PreferencesDialog(QtWidgets.QDialog):
         button_box = QtWidgets.QDialogButtonBox()
         save_button = button_box.addButton(QtWidgets.QDialogButtonBox.Save)
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(save_button, QtCore.SIGNAL('clicked()'), self.save_preferences)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        save_button.clicked.connect(self.save_preferences)
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         mainlayout.addWidget(button_box)
 
         self.setLayout(mainlayout)
@@ -1214,8 +1214,8 @@ class PreferencesDialog(QtWidgets.QDialog):
                     opt, eq, val = line.split()
                     self.set_value(group, opt, val)
         self.update_main_window()
-        self.connect(self.gopts["rvc"]["cb_show_lc"], QtCore.SIGNAL('stateChanged(int)'), self.show_lc_changed)
-        self.connect(self.gopts["rvc"]["spin_res_ran"], QtCore.SIGNAL('valueChanged(double)'), self.plot_rv_nostats)
+        self.gopts["rvc"]["cb_show_lc"].stateChanged.connect(self.show_lc_changed)
+        self.gopts["rvc"]["spin_res_ran"].valueChanged.connect(self.plot_rv_nostats)
         
 
     def save_preferences(self):
@@ -1260,9 +1260,9 @@ class EditMaskDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
-        self.connect(self.apply_button, QtCore.SIGNAL('clicked()'), self.apply_masks)
+        self.apply_button.clicked.connect(self.apply_masks)
         vlayout.addWidget(button_box)
 
         self.setLayout(vlayout)
@@ -1321,7 +1321,7 @@ class HelpDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox()
         close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
-        self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
+        close_button.clicked.connect(QtCore.SLOT('close()'))
         vlayout.addWidget(button_box)
 
         self.setLayout(vlayout)

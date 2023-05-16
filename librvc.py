@@ -135,8 +135,8 @@ class RV_CURVE(QtWidgets.QMainWindow):
         self.butt_phased.setToolTip("Toggle between raw and phased RV curve.")
         self.cb_show_model = QtWidgets.QCheckBox("Model")
         self.cb_show_model.setToolTip("Show model RV curve.")
-        self.connect(self.butt_phased, QtCore.SIGNAL('clicked()'), self.sync_phased)
-        self.connect(self.cb_show_model, QtCore.SIGNAL('stateChanged(int)'), self.sync_show_model)
+        self.butt_phased.clicked.connect(self.sync_phased)
+        self.cb_show_model.stateChanged.connect(self.sync_show_model)
 
         next_butt = QtWidgets.QPushButton(">",self)
         prev_butt = QtWidgets.QPushButton("<",self)
@@ -144,8 +144,8 @@ class RV_CURVE(QtWidgets.QMainWindow):
         prev_butt.setToolTip("Select previous data point.")
         next_butt.setMaximumWidth(self.main.smallbutton_width)
         prev_butt.setMaximumWidth(self.main.smallbutton_width)
-        self.connect(prev_butt, QtCore.SIGNAL('clicked()'), self.select_prev_datapoint)
-        self.connect(next_butt, QtCore.SIGNAL('clicked()'), self.select_next_datapoint)
+        prev_butt.clicked.connect(self.select_prev_datapoint)
+        next_butt.clicked.connect(self.select_next_datapoint)
         prev_butt.setStatusTip('Go to previous spectrum.')
         next_butt.setStatusTip('Go to next spectrum.')
         

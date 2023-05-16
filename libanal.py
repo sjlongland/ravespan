@@ -35,7 +35,7 @@
 # * work/specconv.py - a template program for spectra conversion to RaveSpan format
 #
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 from libcommon import *
 
 

@@ -37,7 +37,7 @@
 #################################################################
 
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 from libcommon import *
 from numpy.fft import rfft, irfft,fft,ifft
 from numpy import max as npmax

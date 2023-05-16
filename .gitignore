@@ -1,0 +1,9 @@
+# vi swapfiles
+*.swp
+.*.swp
+
+# back-up files
+*.bak
+
+# Python cache
+__pycache__

@@ -1,0 +1,24 @@
+#! /usr/bin/env python
+
+import sys
+sys.path.append('$PYLIBDIR')
+from ravespan import *
+#from getopt import gnu_getopt,GetoptError
+
+datadir = '.'
+slibdir = './slib'
+verb = False
+objfile = None
+
+for arg in sys.argv[1:]:
+    print arg
+    if arg[:2]=="-v":
+        verb = True
+    elif arg.endswith(".obj"):
+        objfile = arg
+
+app = QtGui.QApplication(sys.argv)
+menu = RV_MENU(objfile=objfile, datadir=datadir, slibdir=slibdir, verbose=verb)
+menu.show()
+
+sys.exit(app.exec_())

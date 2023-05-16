@@ -1,0 +1,58 @@
+#! /bin/bash
+# TO INSTALL:
+# - create python library directory somewhere,
+#   eg. /data/pylib or /home/user/pylib
+# - change 'pylibdir' below accordingly and run this file ('makelib')
+# - or run: makelib ~/my_pylib
+# - if 'bindir' is set it will install the program to your bin dir
+# - check if automatically updated python library path in 'rvspec' is ok
+# - copy 'work' directory to your working directory
+# - copy or link (to save space) 'slib' directory to your working
+#   directory
+# - run 'rvspec' there
+
+pylibdir=~/pylib
+
+[[ $# > 0 ]] && pylibdir=$1
+
+libdir=$pylibdir/ravespan
+mainlib=ravespan
+progname=rvspec
+
+bindir=~/bin # remove (comment) this line if you don't like
+             # the program to install in your bin directory
+
+[[ ! -e $pylibdir ]] && echo Directory $pylibdir not accesible. && exit
+
+echo -e "\n* making object files"
+python -c "import $mainlib" 2>&1 | tee makelib.log
+grep -q Traceback makelib.log && echo -e "\n!!! ERROR COMPILING FILES !!!\n" && exit
+echo -e "\tdone"
+
+echo -e "\n* creating library directory"
+[[ -e $libdir ]] && echo -e "\t$libdir already exists"
+[[ ! -e $libdir ]] && mkdir $libdir && echo -e "\t$libdir created"
+
+echo -e "\n* copying compiled object files to the library directory"
+cp -uv *.pyc $libdir/ | tee -a makelib.log
+grep -q "\->" makelib.log || echo -e "\n\tNO CHANGES"
+[[ ! -e DEVLOCK ]] && rm *.pyc
+
+echo -e "\n* creating __init__ link to main library file"
+[[ -e $libdir/__init__.pyc ]] && echo -e "\t__init__ already exists"
+[[ ! -e $libdir/__init__.pyc ]] && ln -s $libdir/$mainlib.pyc $libdir/__init__.pyc
+
+echo -e "\n* installing executable to your bin directory"
+pldsed=`echo $pylibdir | sed 's/\//\\\\\//g'`
+sed "s/\$PYLIBDIR/$pldsed/" $progname > ${progname}.tmp
+if [[ -e $bindir/$progname ]]
+then 
+  echo -e "\tfile $bindir/$progname exists"
+  ((`diff ${progname}.tmp $bindir/$progname | wc -l`>0)) && mv ${progname}.tmp $bindir/$progname && echo -e "\toverwriting existing file"
+else
+  [[ -e $bindir ]] && mv ${progname}.tmp $bindir/$progname
+  echo done
+fi
+
+chmod +x $bindir/$progname
+echo

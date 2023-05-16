@@ -1,0 +1,4 @@
+This is a place for files with object description (may be empty at the beginning). They should have '.obj' extension, for example:
+ example.obj
+
+In the 'specdb' directory there should be a folder with the same main part ('example' for the object name above) that contains spectra collected for this object.

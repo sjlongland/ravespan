@@ -1,0 +1,3 @@
+This is a place for directories with collected spectra for every object.
+Their name should be the main part of the object file (without extension).
+So object file 'objects/example.obj' should have 'specdb/example' directory.

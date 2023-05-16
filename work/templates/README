@@ -1,0 +1,7 @@
+Templates names have simpler form than the object spectra.
+They consist of:
+* NAME - template name
+* WAVE0 - wavelength of the beginning of the spectrum
+* RES - resolution
+
+i.e.  NAME_WAVE0_RES

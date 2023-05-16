@@ -205,9 +205,9 @@ class DATA_VIEW(QtWidgets.QMainWindow):
         for i in range(self.def_row):
             table.setRowHeight(i, self.def_rowheight)
         
-        table.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         
-        table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         
         return table
 

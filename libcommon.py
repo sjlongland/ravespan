@@ -43,7 +43,7 @@ import inspect
 from scipy.interpolate import splrep, splev
 from scipy.optimize import leastsq
 from scipy.linalg import svd
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar

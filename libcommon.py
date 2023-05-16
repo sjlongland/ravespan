@@ -132,7 +132,7 @@ class MyNavigationToolbar(NavigationToolbar):
             
 
 def set_QSpin(parent, val,rmin=0.0,rmax=1.0,step=0.1,decimals=None,suffix=None):
-    obj = QtGui.QDoubleSpinBox(parent)
+    obj = QtWidgets.QDoubleSpinBox(parent)
     obj.setRange(rmin,rmax)
     obj.setValue(val)
     obj.setSingleStep(step)
@@ -143,7 +143,7 @@ def set_QSpin(parent, val,rmin=0.0,rmax=1.0,step=0.1,decimals=None,suffix=None):
     return obj
 
 def set_QIntSpin(parent, val,rmin=0,rmax=9,step=1,suffix=None):
-    obj = QtGui.QSpinBox(parent)
+    obj = QtWidgets.QSpinBox(parent)
     obj.setRange(rmin,rmax)
     obj.setValue(val)
     obj.setSingleStep(step)

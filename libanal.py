@@ -35,11 +35,11 @@
 # * work/specconv.py - a template program for spectra conversion to RaveSpan format
 #
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from libcommon import *
 
 
-class SPECANAL(QtGui.QMainWindow):
+class SPECANAL(QtWidgets.QMainWindow):
     """ Analysis Window - CCF, TODCOR, Broadening Function profiles and velocity
         determination. """
     def __init__(self, parent):
@@ -49,7 +49,7 @@ class SPECANAL(QtGui.QMainWindow):
 
         self.setWindowTitle("RV Analysis")
         
-        self.main_frame = QtGui.QWidget()
+        self.main_frame = QtWidgets.QWidget()
 
         self.dpi = 80
         bgcolor = [v / 255.0 for v in self.palette().color(QtGui.QPalette.Window).getRgb()]
@@ -77,17 +77,17 @@ class SPECANAL(QtGui.QMainWindow):
         self.bfsmooth_step = 0.05 
         self.bf_slider = None
 
-        self.bf_slider = QtGui.QSlider(QtCore.Qt.Vertical)
+        self.bf_slider = QtWidgets.QSlider(QtCore.Qt.Vertical)
         self.bf_slider.setRange(self.bfsmooth_min/self.bfsmooth_step, self.bfsmooth_max/self.bfsmooth_step)
         self.bf_slider.setValue(self.bfsmooth_sig/self.bfsmooth_step)
         self.bf_slider.setTracking(True)
-        self.bf_slider.setTickPosition(QtGui.QSlider.TicksBothSides)
+        self.bf_slider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
         self.bf_slider.setFixedWidth(30)
         self.bf_slider.setEnabled(False)
         self.bf_slider.setToolTip("Set Broadening Function smoothing level.\nWorks only if BF method results are present.")
         self.connect(self.bf_slider, QtCore.SIGNAL('valueChanged(int)'), self.bf_slider_event)
         
-        self.bf_value_label=QtGui.QLabel('{0:.2f}'.format(self.bfsmooth_sig),self.main_frame)
+        self.bf_value_label=QtWidgets.QLabel('{0:.2f}'.format(self.bfsmooth_sig),self.main_frame)
         font = self.bf_value_label.font()
         font.setPointSize(10)
         self.bf_value_label.setFont(font)
@@ -114,19 +114,19 @@ class SPECANAL(QtGui.QMainWindow):
 
         self.mpl_toolbar = MyNavigationToolbar(self.canvas,self.main_frame, 'vertical')
         
-        lab_vfixed = QtGui.QLabel("Fixed:")
+        lab_vfixed = QtWidgets.QLabel("Fixed:")
         self.vfixed = []
         for i in range(self.Nv):
-            self.vfixed += [QtGui.QCheckBox(str(i+1))]
+            self.vfixed += [QtWidgets.QCheckBox(str(i+1))]
             self.vfixed[i].setToolTip('Fix velocity #%d'%(i+1))
             self.connect(self.vfixed[i], QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
 
-        self.cb_mark_rvs = QtGui.QCheckBox("RVs")
+        self.cb_mark_rvs = QtWidgets.QCheckBox("RVs")
         self.cb_mark_rvs.setChecked(True)
         self.cb_mark_rvs.setToolTip('Mark components radial velocities.')
         self.connect(self.cb_mark_rvs, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
 
-        self.cb_show_fits = QtGui.QCheckBox("Fits")
+        self.cb_show_fits = QtWidgets.QCheckBox("Fits")
         self.cb_show_fits.setChecked(True)
         self.cb_show_fits.setToolTip('Show fit curves.')
         self.connect(self.cb_show_fits, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
@@ -134,19 +134,19 @@ class SPECANAL(QtGui.QMainWindow):
         self.connect(self.cb_mark_rvs, QtCore.SIGNAL('stateChanged(int)'), self.show_velos)
         self.connect(self.cb_show_fits, QtCore.SIGNAL('stateChanged(int)'), self.show_fits)
         
-        self.cb_manual = QtGui.QCheckBox("Manual")
+        self.cb_manual = QtWidgets.QCheckBox("Manual")
         self.cb_manual.setToolTip('Allow manual setting of velocities.')
         self.connect(self.cb_manual, QtCore.SIGNAL('clicked()'), self.canvas.setFocus)
         
-        self.hbox = QtGui.QHBoxLayout()
-        v1box = QtGui.QVBoxLayout()
+        self.hbox = QtWidgets.QHBoxLayout()
+        v1box = QtWidgets.QVBoxLayout()
         v1box.addWidget(self.mpl_toolbar)
         v1box.addWidget(self.bf_slider)
         v1box.addWidget(self.bf_value_label)
         self.hbox.addLayout(v1box)
-        v2box = QtGui.QVBoxLayout()
+        v2box = QtWidgets.QVBoxLayout()
         v2box.addWidget(self.canvas)
-        h1box = QtGui.QHBoxLayout()
+        h1box = QtWidgets.QHBoxLayout()
         h1box.addSpacing(15)
         h1box.addWidget(lab_vfixed)
         for i in range(self.Nv):

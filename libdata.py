@@ -38,10 +38,10 @@
 
 
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from libcommon import *
 
-class DATA_VIEW(QtGui.QMainWindow):
+class DATA_VIEW(QtWidgets.QMainWindow):
     """ Data View Window """
     def __init__(self, parent):
         super(DATA_VIEW, self).__init__(parent)
@@ -52,7 +52,7 @@ class DATA_VIEW(QtGui.QMainWindow):
         self.analysis = self.main.analysis
 
         self.setWindowTitle("Data View")
-        self.main_frame = QtGui.QWidget() 
+        self.main_frame = QtWidgets.QWidget() 
         
         self.Nv = self.main.Nv
 
@@ -84,8 +84,8 @@ class DATA_VIEW(QtGui.QMainWindow):
         filemenu_order = ["open", "saveall", "saveselas", "--sep", "quit"]
         filemenu_items = {"open": ["Open", "Ctrl+O", 'Open object', lambda: 0],
             'saveall': ["Save all", "Ctrl+S", 'Save all comumns', self.curve.save_rvc_interactive],
-          'saveselas': ["Save selected as...", None, 'Save only selected columns as...', self.save_selected_cols],
-        'quit': ["Quit", "Ctrl+Q", 'Quit application', QtCore.SLOT('close()')]
+            'saveselas': ["Save selected as...", None, 'Save only selected columns as...', self.save_selected_cols],
+            'quit': ["Quit", "Ctrl+Q", 'Quit application', QtCore.SLOT('close()')]
         }
 
         for fmitem in filemenu_order:
@@ -93,7 +93,7 @@ class DATA_VIEW(QtGui.QMainWindow):
                 self.mbMenu["main"].addSeparator()
             else:
                 name, shortcut, statustip, eventfun = filemenu_items[fmitem]
-                obj = QtGui.QAction(name, self)
+                obj = QtWidgets.QAction(name, self)
                 if shortcut is not None:
                     obj.setShortcut(shortcut)
                 obj.setStatusTip(statustip)
@@ -115,7 +115,7 @@ class DATA_VIEW(QtGui.QMainWindow):
                 self.mbMenu["partial"].addSeparator()
             else:
                 name, eventfun = filemenu_items[fmitem]
-                obj = QtGui.QAction(name, self)
+                obj = QtWidgets.QAction(name, self)
                 self.connect(obj, QtCore.SIGNAL('triggered()'), eventfun)
                 self.mbMenu["partial"].addAction(obj)
 
@@ -145,7 +145,7 @@ class DATA_VIEW(QtGui.QMainWindow):
                 self.mbMenu["tools"].addSeparator()
             else:
                 name, eventfun, checked = self.mitems["tools"][mitem]
-                self.mobjects["tools"][mitem] = QtGui.QAction(name, self)
+                self.mobjects["tools"][mitem] = QtWidgets.QAction(name, self)
                 self.connect(self.mobjects["tools"][mitem], QtCore.SIGNAL('triggered()'), eventfun)
                 if checked is not None:
                     self.mobjects["tools"][mitem].setCheckable(True)
@@ -156,7 +156,7 @@ class DATA_VIEW(QtGui.QMainWindow):
         self.scaling_factor_txt = self.menubar.addMenu("esf=%.3g"%self.curve.error_scaling)
         self.scaling_factor_txt.setEnabled(False)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         
         self.coldata = {"hjd":  ["HJD", 118, "%.5f"],
                         "rv1":  ["RV1",  75, "%.3f"],
@@ -195,7 +195,7 @@ class DATA_VIEW(QtGui.QMainWindow):
 
     def initialize_table(self):
         """ Initialize data table, set labels, widths, heights, set hidden columns. """
-        table = QtGui.QTableWidget(self.def_row, len(self.col_order))
+        table = QtWidgets.QTableWidget(self.def_row, len(self.col_order))
         table.setHorizontalHeaderLabels(self.get_labels())
         for i,key in enumerate(self.col_order):
             cwidth = self.coldata[key][1]
@@ -300,7 +300,7 @@ class DATA_VIEW(QtGui.QMainWindow):
         for i in range(self.nrow):
             self.table.setRowHeight(i,self.def_rowheight)
             for j,cid in enumerate(self.col_order):
-                twi = QtGui.QTableWidgetItem("")
+                twi = QtWidgets.QTableWidgetItem("")
                 self.table.setItem(i,j,twi)    
 
     def fill_table(self):
@@ -412,7 +412,7 @@ class DATA_VIEW(QtGui.QMainWindow):
     def point_selected_click(self, row, col):
         if col == 0 or col > self.main.Nv*2:
             return
-        mods = QtGui.QApplication.keyboardModifiers()
+        mods = QtWidgets.QApplication.keyboardModifiers()
         if mods == QtCore.Qt.AltModifier:
             self.curve.toggle_datapoint(row, (col-1)/2, plot_data=True)
         elif mods == QtCore.Qt.ControlModifier:

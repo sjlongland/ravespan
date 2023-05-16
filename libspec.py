@@ -37,12 +37,12 @@
 #################################################################
 
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from libcommon import *
 from numpy.fft import rfft, irfft,fft,ifft
 from numpy import max as npmax
 
-class SPECTRUM(QtGui.QMainWindow):
+class SPECTRUM(QtWidgets.QMainWindow):
     """ Spectrum View Window: spectrum, template, zoom panel """
     def __init__(self, parent):
         super(SPECTRUM, self).__init__(parent)
@@ -55,7 +55,7 @@ class SPECTRUM(QtGui.QMainWindow):
         self.init_vals()
         self.load_masks()
 
-        self.main_frame = QtGui.QWidget()
+        self.main_frame = QtWidgets.QWidget()
 
         self.dpi = 80
         bgcolor = [v / 255.0 for v in self.palette().color(QtGui.QPalette.Window).getRgb()]
@@ -90,45 +90,45 @@ class SPECTRUM(QtGui.QMainWindow):
         self.canvas.draw()
         self.zoomcanvas.draw()
 
-        self.cb_show_spec = QtGui.QCheckBox("Spectrum")
+        self.cb_show_spec = QtWidgets.QCheckBox("Spectrum")
         self.cb_show_spec.setToolTip("Show selected spectrum.")
         self.spec_plot.set_visible(self.cb_show_spec.isChecked())   
         self.cb_show_tpl = []
         for i in range(2):
-            self.cb_show_tpl.append(QtGui.QCheckBox("T%d"%(i+1)))
+            self.cb_show_tpl.append(QtWidgets.QCheckBox("T%d"%(i+1)))
             self.cb_show_tpl[i].setToolTip('Show template %d in the Spectrum window.'%(i+1))
             state = (i==0)
             self.cb_show_tpl[i].setChecked(state)
             self.tpl_plot[i].set_visible(state)   
             self.connect(self.cb_show_tpl[i], QtCore.SIGNAL('stateChanged(int)'), self.sync_show_tpl)
         
-        self.cb_normalization = QtGui.QCheckBox("Normalized")
+        self.cb_normalization = QtWidgets.QCheckBox("Normalized")
         self.cb_normalization.setToolTip("Toggle normalization of selected spectrum.")
         self.cb_normalization.setChecked(True)
-        self.cb_zoom_lock = QtGui.QCheckBox("Zoom lock")
+        self.cb_zoom_lock = QtWidgets.QCheckBox("Zoom lock")
         self.cb_zoom_lock.setToolTip("Lock zoom window at selected wavelength.")
         self.connect(self.cb_show_spec, QtCore.SIGNAL('stateChanged(int)'), self.sync_show_spec)
         self.connect(self.cb_normalization, QtCore.SIGNAL('stateChanged(int)'), self.sync_normalization)
         self.connect(self.cb_zoom_lock, QtCore.SIGNAL('stateChanged(int)'), self.set_zoommark_visibility)
 
-        self.cb_zoom_stick = QtGui.QCheckBox("Stick")
+        self.cb_zoom_stick = QtWidgets.QCheckBox("Stick")
         self.cb_zoom_stick.setChecked(True)
         self.cb_zoom_stick.setToolTip("Stick to spectrum minima - center zoom window\nat spectrum minimum.")
-        self.cb_zoom_stretch = QtGui.QCheckBox("Stretch")
+        self.cb_zoom_stretch = QtWidgets.QCheckBox("Stretch")
         self.cb_zoom_stretch.setToolTip("Stretch spectrum vertically in zoom window\nto fill available Y-space.")
         self.connect(self.cb_zoom_stretch, QtCore.SIGNAL('stateChanged(int)'), self.on_zoom_change)
-        zoomrange_lab = QtGui.QLabel("Zoom:")
+        zoomrange_lab = QtWidgets.QLabel("Zoom:")
         self.zoomrange = set_QSpin(self, 6.,rmin=1.,rmax=99.99,step=0.5)
         self.zoomrange.setToolTip("Set zoom range in angstroms around the pointed wavelength.")
         self.connect(self.zoomrange, QtCore.SIGNAL('valueChanged(double)'), self.on_zoom_change)
 
-        self.cb_update_limits = QtGui.QCheckBox("")
+        self.cb_update_limits = QtWidgets.QCheckBox("")
         self.cb_update_limits.setChecked(True)
         self.cb_update_limits.setToolTip("Update limits on any change in the plot.")
 
         self.mpl_toolbar = MyNavigationToolbar(self.canvas, self, widgets=[self.cb_update_limits], coordinates=False)
 
-        gridlay = QtGui.QGridLayout()
+        gridlay = QtWidgets.QGridLayout()
         gridlay.addWidget(self.cb_show_spec,1,1,1,2)
         for i in range(2):
             gridlay.addWidget(self.cb_show_tpl[i],1,3+i)
@@ -142,7 +142,7 @@ class SPECTRUM(QtGui.QMainWindow):
         gridlay.addWidget(zoomrange_lab,2,7)
         gridlay.addWidget(self.zoomrange,2,8,1,1)
         
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.canvas)
         vbox.addLayout(gridlay)
         
@@ -1077,7 +1077,7 @@ class SPECTRUM(QtGui.QMainWindow):
         """ Prepare data for calculations, do calculations with selected method,
             send results to the Analysis Window. """
         if self.spec is None:
-            msgBox = QtGui.QMessageBox.warning(self, "No spectrum", \
+            msgBox = QtWidgets.QMessageBox.warning(self, "No spectrum", \
             "Cannot calculate as there is no spectrum loaded.", \
             QtGui.QMessageBox.Ok)
             return
@@ -1086,7 +1086,7 @@ class SPECTRUM(QtGui.QMainWindow):
         vshift = v0 - barycorr
         is_ok = self.apply_log_and_mask(resolution,method, use_norm, sd_mode=sd_mode, vshift=vshift, allow_binning=True)
         if not is_ok:
-            msgBox = QtGui.QMessageBox.warning(self, "Mask error", \
+            msgBox = QtWidgets.QMessageBox.warning(self, "Mask error", \
             "Mask is too narrow or outside spectrum.", QtGui.QMessageBox.Ok)
             return
          
@@ -1113,7 +1113,7 @@ class SPECTRUM(QtGui.QMainWindow):
             self.analysis.plot_bf(xdata, bfdata, resolution, plot_anal = plot_anal)
             
         else:
-            msgBox = QtGui.QMessageBox.warning(self, "Not implemented", \
+            msgBox = QtWidgets.QMessageBox.warning(self, "Not implemented", \
             "The method is not yet implemented.", QtGui.QMessageBox.Ok)
             return 
 
@@ -1369,7 +1369,7 @@ class SPECTRUM(QtGui.QMainWindow):
             star_spec, templ_specs, is_ok = self._apply_log_and_mask_for(xspec, ydata, res[i], mask_mode='minmax', vmargin=margin, with_tpl=(self.sd_tpl is None), vshift=vshift, allow_binning=True)
 
             if not is_ok:
-                msgBox = QtGui.QMessageBox.warning(self, "Mask error", \
+                msgBox = QtWidgets.QMessageBox.warning(self, "Mask error", \
                 "Mask is too narrow or outside spectrum.", QtGui.QMessageBox.Ok)
                 # print "--- skipped: Mask is too narrow or outside spectrum."
                 continue
@@ -1554,55 +1554,55 @@ class SPECTRUM(QtGui.QMainWindow):
 #########################################
 """
 
-class SDDialog(QtGui.QDialog):
+class SDDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(SDDialog, self).__init__(parent)
         self.spectrum = parent
         self.main = self.spectrum.main
 
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
 
         self.sd_started = False
         self.sd_time_clicked = 0.0
         
-        self.disent_butt = QtGui.QPushButton("Spectral\ndisentangling")
+        self.disent_butt = QtWidgets.QPushButton("Spectral\ndisentangling")
         self.disent_butt.setToolTip("Warning! Long execution - double click to run.")
         self.connect(self.disent_butt, QtCore.SIGNAL('clicked()'), self.spectra_disentangling)
-        self.cb_sdmode = QtGui.QCheckBox("SD mode")
+        self.cb_sdmode = QtWidgets.QCheckBox("SD mode")
         self.cb_sdmode.setStatusTip('Enable Spectral Disentangling mode')
         self.connect(self.cb_sdmode, QtCore.SIGNAL('stateChanged(int)'), self.sd_mode_enabled)
 
-        lab_avgmet = QtGui.QLabel("Method:")
-        self.combo_avg = QtGui.QComboBox()
+        lab_avgmet = QtWidgets.QLabel("Method:")
+        self.combo_avg = QtWidgets.QComboBox()
         self.combo_avg.addItems(["median", "average","maximum",'weighted average'])
-        lab_niter = QtGui.QLabel("# iter:")
+        lab_niter = QtWidgets.QLabel("# iter:")
         self.spin_niter = set_QIntSpin(self,1,rmin=1,rmax=5,step=1)
         self.spin_niter.setToolTip("Number of subiterations for each SD step")
         
-        self.cb_sub_t1 = QtGui.QCheckBox("Subtr. T1")
-        self.cb_sub_t2 = QtGui.QCheckBox("Subtr. T2")
+        self.cb_sub_t1 = QtWidgets.QCheckBox("Subtr. T1")
+        self.cb_sub_t2 = QtWidgets.QCheckBox("Subtr. T2")
         self.connect(self.cb_sub_t1, QtCore.SIGNAL('stateChanged(int)'), self.subtract_template)
         self.connect(self.cb_sub_t2, QtCore.SIGNAL('stateChanged(int)'), self.subtract_template)
 
-        pb_calc_v1 = QtGui.QPushButton("Calc v1")
-        pb_calc_v2 = QtGui.QPushButton("Calc v2")
+        pb_calc_v1 = QtWidgets.QPushButton("Calc v1")
+        pb_calc_v2 = QtWidgets.QPushButton("Calc v2")
         pb_calc_v1.setEnabled(False)
         pb_calc_v2.setEnabled(False)
         self.connect(pb_calc_v1, QtCore.SIGNAL('clicked()'), self.main.calc_all_v1)
         self.connect(pb_calc_v2, QtCore.SIGNAL('clicked()'), self.main.calc_all_v2)
 
-        pb_save_t1 = QtGui.QPushButton("Save T1")
-        pb_save_t2 = QtGui.QPushButton("Save T2")
+        pb_save_t1 = QtWidgets.QPushButton("Save T1")
+        pb_save_t2 = QtWidgets.QPushButton("Save T2")
         pb_save_t1.setToolTip("Saves T1 spectrum (ie. of component 1)\nusing normalization given by L2/L1.")
         pb_save_t2.setToolTip("Saves T2 spectrum (ie. of component 2)\nusing normalization given by L2/L1.")
         self.connect(pb_save_t1, QtCore.SIGNAL('clicked()'), self.saveSDtemplate1)
         self.connect(pb_save_t2, QtCore.SIGNAL('clicked()'), self.saveSDtemplate2)
 
-        pb_save = QtGui.QPushButton("Save\ncurrently\nplotted")
+        pb_save = QtWidgets.QPushButton("Save\ncurrently\nplotted")
         self.connect(pb_save, QtCore.SIGNAL('clicked()'), self.saveSpec_SD)
 
-        group_t1 = QtGui.QGroupBox("Component 1:")
-        group_t2 = QtGui.QGroupBox("Component 2:")
+        group_t1 = QtWidgets.QGroupBox("Component 1:")
+        group_t2 = QtWidgets.QGroupBox("Component 2:")
 
 
         maxcol = 9
@@ -1618,21 +1618,21 @@ class SDDialog(QtGui.QDialog):
         grid.addWidget(lab_niter, row,1)
         grid.addWidget(self.spin_niter, row,2)
 
-        self.sd_progress = QtGui.QProgressBar(self)
+        self.sd_progress = QtWidgets.QProgressBar(self)
         self.sd_progress.setToolTip("Shows progess of Spectral Disentangling analysis.")        
         grid.addWidget(self.sd_progress, row,3,1,maxcol-2)
 
         row += 1
 
-        lab_lumrat_0 = QtGui.QLabel("L2/L1 =")
+        lab_lumrat_0 = QtWidgets.QLabel("L2/L1 =")
         self.spin_lumrat_b = set_QSpin(self,1.0,rmin=0.001,rmax=99.999,step=0.01,decimals=3)
-        lab_lumrat_1 = QtGui.QLabel("+")
+        lab_lumrat_1 = QtWidgets.QLabel("+")
         self.spin_lumrat_a = set_QSpin(self,0.0,rmin=-9.999,rmax=99.999,step=0.001,decimals=4)
-        lab_lumrat_2 = QtGui.QLabel("<html>* (&lambda; -</html>")
+        lab_lumrat_2 = QtWidgets.QLabel("<html>* (&lambda; -</html>")
         self.spin_lumrat_s = set_QSpin(self,4500.,rmin=0.0,rmax=9999.9,step=1.0,decimals=1)
-        lab_lumrat_3 = QtGui.QLabel(") / 1000")
+        lab_lumrat_3 = QtWidgets.QLabel(") / 1000")
 
-        lumrat_hbox = QtGui.QHBoxLayout()
+        lumrat_hbox = QtWidgets.QHBoxLayout()
 
         lumrat_hbox.addWidget(lab_lumrat_0)
         lumrat_hbox.addWidget(self.spin_lumrat_b)
@@ -1647,10 +1647,10 @@ class SDDialog(QtGui.QDialog):
 
         self.lab_sdres = [None, None]
         for i in range(2):
-            self.lab_sdres[i] = QtGui.QLabel("Res T%d: ?"%(i+1))
+            self.lab_sdres[i] = QtWidgets.QLabel("Res T%d: ?"%(i+1))
             grid.addWidget(self.lab_sdres[i], row,4+i*3,1,3)
         
-        lab_binsize = QtGui.QLabel("Bin:")
+        lab_binsize = QtWidgets.QLabel("Bin:")
         self.spin_binsize = set_QIntSpin(self,1,rmin=1,rmax=32,step=1)
         self.connect(self.spin_binsize, QtCore.SIGNAL('valueChanged(int)'), self.binning_changed)
 
@@ -1662,7 +1662,7 @@ class SDDialog(QtGui.QDialog):
         grid.addWidget(pb_save, row,8,2,2)
 
         grid.addWidget(group_t1,row,1,1,maxcol-2)
-        gt1_hbox = QtGui.QHBoxLayout(group_t1)
+        gt1_hbox = QtWidgets.QHBoxLayout(group_t1)
         gt1_hbox.addWidget(self.cb_sub_t1)
         gt1_hbox.addWidget(pb_calc_v1)
         gt1_hbox.addWidget(pb_save_t1)
@@ -1670,7 +1670,7 @@ class SDDialog(QtGui.QDialog):
         row += 1
 
         grid.addWidget(group_t2,row,1,1,maxcol-2)
-        gt2_hbox = QtGui.QHBoxLayout(group_t2)
+        gt2_hbox = QtWidgets.QHBoxLayout(group_t2)
         gt2_hbox.addWidget(self.cb_sub_t2)
         gt2_hbox.addWidget(pb_calc_v2)
         gt2_hbox.addWidget(pb_save_t2)
@@ -1704,7 +1704,7 @@ class SDDialog(QtGui.QDialog):
 
     def sd_mode_enabled(self, status):
         if not self.sd_started and status: 
-            msgBox = QtGui.QMessageBox.warning(self, "SD mode enabled", "SD mode is now enabled. In this mode if you select T1 and run velocity analysis T2 will be subtracted from each spectrum and only velocity of the first component will be extracted and vice verse if you select T2. Moreover when you start SD analysis, the process will start from a template (in other case it starts from a flat spectrum uniformly equal to 1.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "SD mode enabled", "SD mode is now enabled. In this mode if you select T1 and run velocity analysis T2 will be subtracted from each spectrum and only velocity of the first component will be extracted and vice verse if you select T2. Moreover when you start SD analysis, the process will start from a template (in other case it starts from a flat spectrum uniformly equal to 1.", QtGui.QMessageBox.Ok)
 
     def binning_changed(self, value):
         self.update_res_text(value)

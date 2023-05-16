@@ -37,11 +37,11 @@
 #################################################################
 
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from libcommon import *
 
 
-class RV_CURVE(QtGui.QMainWindow):
+class RV_CURVE(QtWidgets.QMainWindow):
     """ Radial Velocity Curve View Window - observations and model """
     def __init__(self, parent):
         super(RV_CURVE, self).__init__(parent)
@@ -51,7 +51,7 @@ class RV_CURVE(QtGui.QMainWindow):
         self.analysis = self.main.analysis
 
         self.setWindowTitle("RV Curve")
-        self.main_frame = QtGui.QWidget() 
+        self.main_frame = QtWidgets.QWidget() 
         self.left_clicked = 0.0
         
         self.Nv = self.main.Nv
@@ -124,22 +124,22 @@ class RV_CURVE(QtGui.QMainWindow):
         self.ax.axis(ymin=-50, ymax=50, xmin=0, xmax=1)
         self.canvas.draw()
 
-        self.cb_update_limits = QtGui.QCheckBox("")
+        self.cb_update_limits = QtWidgets.QCheckBox("")
         self.cb_update_limits.setChecked(True)
         self.cb_update_limits.setToolTip("Update limits on any change in the plot.")
         
         self.mpl_toolbar = MyNavigationToolbar(self.canvas, self, widgets=[self.cb_update_limits], coordinates=False)
-        self.t_label = QtGui.QLabel("T=?")
-        self.v_label = QtGui.QLabel("v=?")
-        self.butt_phased = QtGui.QPushButton("Raw RVC")
+        self.t_label = QtWidgets.QLabel("T=?")
+        self.v_label = QtWidgets.QLabel("v=?")
+        self.butt_phased = QtWidgets.QPushButton("Raw RVC")
         self.butt_phased.setToolTip("Toggle between raw and phased RV curve.")
-        self.cb_show_model = QtGui.QCheckBox("Model")
+        self.cb_show_model = QtWidgets.QCheckBox("Model")
         self.cb_show_model.setToolTip("Show model RV curve.")
         self.connect(self.butt_phased, QtCore.SIGNAL('clicked()'), self.sync_phased)
         self.connect(self.cb_show_model, QtCore.SIGNAL('stateChanged(int)'), self.sync_show_model)
 
-        next_butt = QtGui.QPushButton(">",self)
-        prev_butt = QtGui.QPushButton("<",self)
+        next_butt = QtWidgets.QPushButton(">",self)
+        prev_butt = QtWidgets.QPushButton("<",self)
         next_butt.setToolTip("Select next data point.")
         prev_butt.setToolTip("Select previous data point.")
         next_butt.setMaximumWidth(self.main.smallbutton_width)
@@ -149,7 +149,7 @@ class RV_CURVE(QtGui.QMainWindow):
         prev_butt.setStatusTip('Go to previous spectrum.')
         next_butt.setStatusTip('Go to next spectrum.')
         
-        hbox1 = QtGui.QHBoxLayout()
+        hbox1 = QtWidgets.QHBoxLayout()
         hbox1.addWidget(self.mpl_toolbar)
         hbox1.addWidget(self.cb_show_model)
         hbox1.addWidget(self.butt_phased)
@@ -158,7 +158,7 @@ class RV_CURVE(QtGui.QMainWindow):
         hbox1.addWidget(self.t_label)
         hbox1.addWidget(self.v_label)
         
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.canvas)
         vbox.addLayout(hbox1)
         vbox.setStretch(0,1)
@@ -430,7 +430,7 @@ class RV_CURVE(QtGui.QMainWindow):
             self.select_datapoint(sortind[i], draw=False)
             plot_analysis = self.main.cb_ca_update.isChecked() or i == lhjds-1
             self.spectrum.calculate(method, resolution, use_norm, sd_mode=sd_mode, plot_anal = plot_analysis)
-            QtGui.QApplication.processEvents()
+            QtWidgets.QApplication.processEvents()
 
     def get_sorted_indices(self, getcurrent=False):
         indices = where(self.v_instr_filter)[0]
@@ -528,7 +528,7 @@ class RV_CURVE(QtGui.QMainWindow):
             else:
                 self.dirpath = self.main.specdir + '/' + self.dirpath
         if not os.path.isdir(self.dirpath):
-            msgBox = QtGui.QMessageBox.warning(self, "Data Error", "No directory with data for the selected object is found.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No directory with data for the selected object is found.", QtGui.QMessageBox.Ok)
             return
         
         self.obj_fid = obj_fid
@@ -901,7 +901,7 @@ class RV_CURVE(QtGui.QMainWindow):
             self.canvas.draw() 
 
     def save_rvc_interactive(self, cols=None):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save RV curve as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save RV curve as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return
@@ -933,7 +933,7 @@ class RV_CURVE(QtGui.QMainWindow):
         self.save_velocity_data(filepath, xdata[iv_on], [ydata[0][iv_on], ydata[1][iv_on]])
 
     def save_residual(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save residual RVC as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save residual RVC as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return  
@@ -965,7 +965,7 @@ class RV_CURVE(QtGui.QMainWindow):
         self.save_velocity_data(filepath, xdata[iv_on], [ydata[0][iv_on], ydata[1][iv_on]])
 
     def save_orbital(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save orbital RVC as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save orbital RVC as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return  
@@ -989,7 +989,7 @@ class RV_CURVE(QtGui.QMainWindow):
         self.save_velocity_data(filepath, xdata[iv_on], [ydata[0][iv_on], ydata[1][iv_on]])
 
     def save_3rd_body(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save 3rd body RVC as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save 3rd body RVC as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return  
@@ -1009,14 +1009,14 @@ class RV_CURVE(QtGui.QMainWindow):
         self.save_velocity_data(filepath, xdata[iv_on], [ydata[iv_on]])
 
     def save_puls1(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save pulsational (A) RVC as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save pulsational (A) RVC as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return  
         self.save_puls_data(filepath, num=0)
 
     def save_puls2(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save pulsational (B) RVC as...', self.main.datadir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save pulsational (B) RVC as...', self.main.datadir)
         filepath = str(filepath)    
         if not filepath:
             return  

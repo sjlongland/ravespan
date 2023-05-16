@@ -58,10 +58,10 @@ from libanal import *
 from libdial import *
 from libdata import *
 
-class RV_MENU(QtGui.QMainWindow):
+class RV_MENU(QtWidgets.QMainWindow):
     """ Main window """
     def __init__(self, objfile=None, datadir='data', slibdir='data/slib', verbose=False, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         self._initvals(datadir,slibdir,verbose)
 
         if sys.platform == "darwin":
@@ -77,14 +77,14 @@ class RV_MENU(QtGui.QMainWindow):
 
         self.setWindowTitle('RaveSpan - Main')
         
-        screen = QtGui.QDesktopWidget().screenGeometry()
+        screen = QtWidgets.QDesktopWidget().screenGeometry()
         self.gui_menu()
         self.statusBar()
 
-        self.main_widget = QtGui.QWidget(self)
+        self.main_widget = QtWidgets.QWidget(self)
 
         ### MAIN LAYOUT ###
-        self.main_layout = QtGui.QVBoxLayout(self.main_widget)
+        self.main_layout = QtWidgets.QVBoxLayout(self.main_widget)
         self.gui_object_data() 
         self.gui_rv_calculations()
         self.gui_show_options() 
@@ -379,7 +379,7 @@ class RV_MENU(QtGui.QMainWindow):
             if state<0:
                 print("\nError reading template:", stext, end=' ')
                 print("=> Template list refresh was forced")
-                msgBox = QtGui.QMessageBox.warning(self, "Template error", "Error reading template: " + \
+                msgBox = QtWidgets.QMessageBox.warning(self, "Template error", "Error reading template: " + \
                                           stext + "\nTemplate list refresh was forced.", QtGui.QMessageBox.Ok)
                 self.refreshTemplates()
         else:
@@ -605,11 +605,11 @@ class RV_MENU(QtGui.QMainWindow):
 
 
     def openObject(self):
-        filepath = QtGui.QFileDialog.getOpenFileName(self, 'Open file', self.obj_dir)
+        filepath = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', self.obj_dir)
         filepath = str(filepath)
         if not filepath: return
         if not filepath.endswith(".obj"):
-            msgBox = QtGui.QMessageBox.warning(self, "File error", "This is not an object file.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "File error", "This is not an object file.", QtGui.QMessageBox.Ok)
             return
         obj_fid = os.path.basename(filepath)[:-4]
 
@@ -711,7 +711,7 @@ class RV_MENU(QtGui.QMainWindow):
         self.curve.save_rv_curve()
 
     def saveAsObject(self):
-        filepath = QtGui.QFileDialog.getSaveFileName(self, 'Save as...', self.obj_dir)
+        filepath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save as...', self.obj_dir)
         filepath = str(filepath)    
         if not filepath: return
         if not filepath.endswith(".obj"):  filepath += ".obj"
@@ -719,7 +719,7 @@ class RV_MENU(QtGui.QMainWindow):
         self.saveObject()
 
     def browse_data(self):
-        datapath = QtGui.QFileDialog.getExistingDirectory(self, 'Open file', self.specdir, QtGui.QFileDialog.ShowDirsOnly)
+        datapath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open file', self.specdir, QtGui.QFileDialog.ShowDirsOnly)
         datapath = str(datapath)    
         if not datapath: return
 
@@ -730,7 +730,7 @@ class RV_MENU(QtGui.QMainWindow):
                 ngood+=1
 
         if ngood == 0:
-            msgBox = QtGui.QMessageBox.warning(self, "Data Error", "No data in the selected directory is found.", QtGui.QMessageBox.Ok)
+            msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No data in the selected directory is found.", QtGui.QMessageBox.Ok)
         
         datapath = datapath.replace(os.path.realpath(self.specdir),'')
         if datapath[0] == '/':
@@ -743,7 +743,7 @@ class RV_MENU(QtGui.QMainWindow):
     def save_spectrum(self, xspec, spec):
         if spec is None: return
 
-        specpath = QtGui.QFileDialog.getSaveFileName(self, 'Save spectrum as...', self.datadir)
+        specpath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save spectrum as...', self.datadir)
         specpath = str(specpath)    
         if specpath == "": return
         
@@ -768,7 +768,7 @@ class RV_MENU(QtGui.QMainWindow):
         
         if spec is None: return
 
-        specpath = QtGui.QFileDialog.getSaveFileName(self, 'Save template as...', self.datadir)
+        specpath = QtWidgets.QFileDialog.getSaveFileName(self, 'Save template as...', self.datadir)
         specpath = str(specpath)    
         if specpath == "": return
         
@@ -835,7 +835,7 @@ class RV_MENU(QtGui.QMainWindow):
             item_type = menu_item[0]
             if item_type == 'a':
                 item_obj, item_fun = menu_item[1:3]
-                taction = QtGui.QAction(item_obj, self)
+                taction = QtWidgets.QAction(item_obj, self)
                 if len(menu_item)>3:
                     taction.setStatusTip(menu_item[3])
                 self.connect(taction, QtCore.SIGNAL('triggered()'), item_fun)
@@ -865,7 +865,7 @@ class RV_MENU(QtGui.QMainWindow):
                 mbFile.addSeparator()
             else:
                 icon, name, shortcut, statustip, eventfun = filemenu_items[fmitem]
-                obj = QtGui.QAction(QtGui.QIcon(icon_path+icon), name, self)
+                obj = QtWidgets.QAction(QtGui.QIcon(icon_path+icon), name, self)
                 if shortcut is not None:
                     obj.setShortcut(shortcut)
                 obj.setStatusTip(statustip)
@@ -914,17 +914,17 @@ class RV_MENU(QtGui.QMainWindow):
 
         self.obj_spin = {}
 
-        object_group = QtGui.QGroupBox("Object:")
+        object_group = QtWidgets.QGroupBox("Object:")
         self.main_layout.addWidget(object_group)
-        self.object_layout = QtGui.QVBoxLayout(object_group)
+        self.object_layout = QtWidgets.QVBoxLayout(object_group)
         
-        self.id_grid = QtGui.QGridLayout()
+        self.id_grid = QtWidgets.QGridLayout()
         self.object_layout.addLayout(self.id_grid)
         
         # ID
-        idlabel = QtGui.QLabel('ID:', self.main_widget)
-        self.obj_id_field = QtGui.QLineEdit("", self.main_widget)
-        pb_browse_obj = QtGui.QPushButton("&Browse")
+        idlabel = QtWidgets.QLabel('ID:', self.main_widget)
+        self.obj_id_field = QtWidgets.QLineEdit("", self.main_widget)
+        pb_browse_obj = QtWidgets.QPushButton("&Browse")
         self.connect(pb_browse_obj, QtCore.SIGNAL('clicked()'), self.openObject)
         self.connect(self.obj_id_field, QtCore.SIGNAL('textChanged(QString)'), self.id_changed)
         self.id_grid.addWidget(idlabel,1,1)
@@ -932,36 +932,36 @@ class RV_MENU(QtGui.QMainWindow):
         self.id_grid.addWidget(pb_browse_obj,1,3)
 
         # PATH
-        pathlabel = QtGui.QLabel('data:', self.main_widget)
-        self.obj_path_field = QtGui.QPushButton("", self.main_widget)
+        pathlabel = QtWidgets.QLabel('data:', self.main_widget)
+        self.obj_path_field = QtWidgets.QPushButton("", self.main_widget)
         self.connect(self.obj_path_field, QtCore.SIGNAL('clicked()'), self.browse_data)
         self.id_grid.addWidget(pathlabel,2,1)
         self.id_grid.addWidget(self.obj_path_field,2,2,1,2)
 
         # EPHEMERIS - PERIOD
-        self.ephem_grid = QtGui.QGridLayout()
+        self.ephem_grid = QtWidgets.QGridLayout()
         self.object_layout.addLayout(self.ephem_grid)
-        self.cb_per = QtGui.QCheckBox("P:", self.main_widget)
+        self.cb_per = QtWidgets.QCheckBox("P:", self.main_widget)
         self.obj_spin["per"] = set_QSpin(self,1.0,rmin=0.00001,rmax=99999.,step=0.1,decimals=7)
         self.connect(self.obj_spin["per"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
         self.connect(self.obj_spin["per"], QtCore.SIGNAL('editingFinished()'), self.per_changed)
         self.ephem_grid.addWidget(self.cb_per,1,1)
         self.ephem_grid.addWidget(self.obj_spin["per"],1,2,1,2)
 
-        self.cb_ecc = QtGui.QCheckBox('ecc:', self.main_widget)
+        self.cb_ecc = QtWidgets.QCheckBox('ecc:', self.main_widget)
         self.obj_spin["ecc"] = set_QSpin(self,0.0,rmin=0.0,rmax=0.98,step=0.01,decimals=5)
         self.connect(self.obj_spin["ecc"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
         self.ephem_grid.addWidget(self.cb_ecc,1,4)
         self.ephem_grid.addWidget(self.obj_spin["ecc"],1,5)
 
         # EPHEMERIS - HJD0
-        self.cb_t0 = QtGui.QCheckBox('T0:', self.main_widget)
+        self.cb_t0 = QtWidgets.QCheckBox('T0:', self.main_widget)
         self.obj_spin["t0"] = set_QSpin(self,5000.0,rmin=0.0,rmax=9999.99999,step=0.1,decimals=5)
         self.connect(self.obj_spin["t0"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
         self.ephem_grid.addWidget(self.cb_t0,2,1)
         self.ephem_grid.addWidget(self.obj_spin["t0"],2,2,1,2)
 
-        self.cb_aop = QtGui.QCheckBox('aop:', self.main_widget)
+        self.cb_aop = QtWidgets.QCheckBox('aop:', self.main_widget)
         self.obj_spin["aop"] = set_QSpin(self,0.0,rmin=-0.1,rmax=dpi+0.1,step=0.1,decimals=5)
         self.connect(self.obj_spin["aop"], QtCore.SIGNAL('valueChanged(double)'), self.aop_changed)
         self.ephem_grid.addWidget(self.cb_aop,2,4)
@@ -969,16 +969,16 @@ class RV_MENU(QtGui.QMainWindow):
 
 
         # ORBIT
-        self.cb_v0 = QtGui.QCheckBox('V0:', self.main_widget)
+        self.cb_v0 = QtWidgets.QCheckBox('V0:', self.main_widget)
         self.obj_spin["v0"] = set_QSpin(self,0.0,rmin=-999,rmax=999,step=0.5, decimals=3)
         self.connect(self.obj_spin["v0"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
         self.ephem_grid.addWidget(self.cb_v0,3,4)
         self.ephem_grid.addWidget(self.obj_spin["v0"],3,5)
 
-        self.cb_k1 = QtGui.QCheckBox('K1:', self.main_widget)
+        self.cb_k1 = QtWidgets.QCheckBox('K1:', self.main_widget)
         self.obj_spin["k1"] = set_QSpin(self,100.0,rmin=0.0,rmax=499.9999,step=0.2, decimals=4)
         self.connect(self.obj_spin["k1"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
-        self.cb_k2 = QtGui.QCheckBox('K2:', self.main_widget)
+        self.cb_k2 = QtWidgets.QCheckBox('K2:', self.main_widget)
         self.obj_spin["k2"] = set_QSpin(self,50.0,rmin=0.0,rmax=4999.9999,step=0.2, decimals=4)
         self.connect(self.obj_spin["k2"], QtCore.SIGNAL('valueChanged(double)'), self.param_changed)
         self.ephem_grid.addWidget(self.cb_k1,3,1)
@@ -995,14 +995,14 @@ class RV_MENU(QtGui.QMainWindow):
         self.cb_k1.setChecked(1)
         self.cb_k2.setChecked(1)
 
-        pb_fit_more = QtGui.QPushButton('+')
+        pb_fit_more = QtWidgets.QPushButton('+')
         pb_fit_more.setStatusTip("Additional fitting parameters.")
         pb_fit_more.setMaximumWidth(self.smallbutton_width)
 
         self.fitdial = FittingDialog(self)
         self.connect(pb_fit_more, QtCore.SIGNAL('clicked()'), self.fitdial.show_or_activate)
 
-        pb_fit_params = QtGui.QPushButton("Fit")
+        pb_fit_params = QtWidgets.QPushButton("Fit")
         pb_fit_params.setStatusTip("Fit selected parameters to the data.")
 
         self.connect(pb_fit_params, QtCore.SIGNAL('clicked()'), self.fit_params)
@@ -1013,9 +1013,9 @@ class RV_MENU(QtGui.QMainWindow):
 
     def gui_rv_calculations(self):
         """ GUI RV Calculations Group Box """
-        self.rv_calc_group = QtGui.QGroupBox("RV calculations:")
+        self.rv_calc_group = QtWidgets.QGroupBox("RV calculations:")
         self.main_layout.addWidget(self.rv_calc_group)
-        self.rv_calc_grid = QtGui.QGridLayout(self.rv_calc_group)
+        self.rv_calc_grid = QtWidgets.QGridLayout(self.rv_calc_group)
         self.rv_calc_grid.setColumnStretch(6,1)
         self.grid_row = 0
         self.gui_method_selection()     # 1 - Method LAYOUT
@@ -1026,12 +1026,12 @@ class RV_MENU(QtGui.QMainWindow):
         self.gui_calc_opts()
 
     def gui_method_selection(self):    
-        self.method_combo = QtGui.QComboBox(self)
-        button_group = QtGui.QButtonGroup()
-        self.t1_radio = QtGui.QRadioButton("T1")
+        self.method_combo = QtWidgets.QComboBox(self)
+        button_group = QtWidgets.QButtonGroup()
+        self.t1_radio = QtWidgets.QRadioButton("T1")
         self.t1_radio.setStatusTip("Use template 1 for this method.")
         self.t1_radio.toggle()
-        self.t2_radio = QtGui.QRadioButton("T2")
+        self.t2_radio = QtWidgets.QRadioButton("T2")
         self.t2_radio.setStatusTip("Use template 2 for this method.")
         button_group.addButton(self.t1_radio)
         button_group.addButton(self.t2_radio)
@@ -1050,11 +1050,11 @@ class RV_MENU(QtGui.QMainWindow):
         self.tpl_buttons = [None,None]
         self.tpl_combos = [None,None]
         for i in range(2):
-            self.tpl_buttons[i] = QtGui.QPushButton('T%d'%(i+1),self)
+            self.tpl_buttons[i] = QtWidgets.QPushButton('T%d'%(i+1),self)
             self.tpl_buttons[i].setStatusTip('Select template %d by parameters.'%(i+1))
             self.tpl_buttons[i].setMaximumWidth(self.smallbutton_width)
             
-            self.tpl_combos[i] = QtGui.QComboBox(self)
+            self.tpl_combos[i] = QtWidgets.QComboBox(self)
             self.add_templates(i)
             self.tpl_combos[i].setStatusTip('Select template %d by name.'%(i+1))
 
@@ -1073,23 +1073,23 @@ class RV_MENU(QtGui.QMainWindow):
         self.grid_row += 2
 
     def gui_mask_selection(self):
-        d_label = QtGui.QLabel('Date:', self.main_widget)
+        d_label = QtWidgets.QLabel('Date:', self.main_widget)
         d_label.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignCenter)
-        self.date = QtGui.QLabel('not set', self.main_widget)
+        self.date = QtWidgets.QLabel('not set', self.main_widget)
         self.date.setEnabled(False)
         self.rv_calc_grid.addWidget(d_label,self.grid_row,1,1,1)
         self.rv_calc_grid.addWidget(self.date,self.grid_row,2,1,3)
 
-        i_label = QtGui.QLabel('Instr:', self.main_widget)
+        i_label = QtWidgets.QLabel('Instr:', self.main_widget)
         i_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignCenter)
-        self.instr_name = QtGui.QLabel('not set', self.main_widget)
+        self.instr_name = QtWidgets.QLabel('not set', self.main_widget)
         self.instr_name.setEnabled(False)
         self.rv_calc_grid.addWidget(i_label,self.grid_row,5,1,1)
         self.rv_calc_grid.addWidget(self.instr_name,self.grid_row,6,1,2)
 
-        m_label = QtGui.QLabel('Mask:', self.main_widget)
+        m_label = QtWidgets.QLabel('Mask:', self.main_widget)
         m_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignCenter)
-        self.mask_combo = QtGui.QComboBox(self)
+        self.mask_combo = QtWidgets.QComboBox(self)
         self.add_masks(self.mask_combo)
         self.connect(self.mask_combo, QtCore.SIGNAL('currentIndexChanged(QString)'), self.mask_activated)
         self.rv_calc_grid.addWidget(m_label,self.grid_row+1,4,1,2)
@@ -1097,19 +1097,19 @@ class RV_MENU(QtGui.QMainWindow):
         self.grid_row += 2
 
     def gui_calc_resolution(self):
-        r_label = QtGui.QLabel('Resolution:', self.main_widget)
+        r_label = QtWidgets.QLabel('Resolution:', self.main_widget)
         self.r_spin = set_QSpin(self,1.0,rmin=0.1,rmax=19.9,step=0.1,suffix=" km/s")
         self.rv_calc_grid.addWidget(r_label,self.grid_row,4,1,2)
         self.rv_calc_grid.addWidget(self.r_spin,self.grid_row,6,1,2)
         self.grid_row += 1
 
     def gui_calc_butts(self):
-        calc_one_butt = QtGui.QPushButton("Calc &One",self)
-        next_butt = QtGui.QPushButton(">",self)
-        prev_butt = QtGui.QPushButton("<",self)
+        calc_one_butt = QtWidgets.QPushButton("Calc &One",self)
+        next_butt = QtWidgets.QPushButton(">",self)
+        prev_butt = QtWidgets.QPushButton("<",self)
         next_butt.setMaximumWidth(self.smallbutton_width)
         prev_butt.setMaximumWidth(self.smallbutton_width)
-        self.calc_all_butt = QtGui.QPushButton("Calc &All",self)
+        self.calc_all_butt = QtWidgets.QPushButton("Calc &All",self)
         self.connect(calc_one_butt, QtCore.SIGNAL('clicked()'), self.calc_one_pressed)
         self.connect(prev_butt, QtCore.SIGNAL('clicked()'), self.curve.select_prev_datapoint)
         self.connect(next_butt, QtCore.SIGNAL('clicked()'), self.curve.select_next_datapoint)
@@ -1124,12 +1124,12 @@ class RV_MENU(QtGui.QMainWindow):
         self.rv_calc_grid.addWidget(next_butt,self.grid_row,5,1,1)
         self.rv_calc_grid.addWidget(self.calc_all_butt,self.grid_row+1,6,1,2)
 
-        err_one_butt = QtGui.QPushButton("&Err. estim.",self)
+        err_one_butt = QtWidgets.QPushButton("&Err. estim.",self)
         err_one_butt.setToolTip("Estimates error by calculating velocities N times adding random noise of the level of data noise.")
         err_one_butt.setEnabled(False)
         self.rv_calc_grid.addWidget(err_one_butt,self.grid_row+1,3,1,3)
 
-        disent_butt = QtGui.QPushButton("SD",self)
+        disent_butt = QtWidgets.QPushButton("SD",self)
         disent_butt.setMaximumWidth(66)
         disent_butt.setStatusTip("Show spectral disentangling window.")
         self.connect(disent_butt, QtCore.SIGNAL('clicked()'), self.sd_dialog.show_or_activate)
@@ -1139,9 +1139,9 @@ class RV_MENU(QtGui.QMainWindow):
 
 
     def gui_calc_opts(self):
-        self.cb_instr_mask=QtGui.QCheckBox("Instr-Mask")
-        self.cb_auto_max=QtGui.QCheckBox("Auto&Max")
-        self.cb_fit=QtGui.QCheckBox("&Fit")
+        self.cb_instr_mask=QtWidgets.QCheckBox("Instr-Mask")
+        self.cb_auto_max=QtWidgets.QCheckBox("Auto&Max")
+        self.cb_fit=QtWidgets.QCheckBox("&Fit")
         self.cb_auto_max.toggle()
         self.cb_fit.toggle()
         self.cb_instr_mask.setStatusTip('Link mask to the instrument.')
@@ -1154,13 +1154,13 @@ class RV_MENU(QtGui.QMainWindow):
     def gui_show_options(self):
         """ GUI SHOW OPTIONS """
 
-        show_options_group = QtGui.QGroupBox("Options:")
+        show_options_group = QtWidgets.QGroupBox("Options:")
         self.main_layout.addWidget(show_options_group)
 
-        self.show_grid = QtGui.QGridLayout(show_options_group)
+        self.show_grid = QtWidgets.QGridLayout(show_options_group)
 
         
-        self.pb_show_rv = QtGui.QPushButton('Show RV')
+        self.pb_show_rv = QtWidgets.QPushButton('Show RV')
         self.pb_show_rv.setStatusTip("Show RV Curve window.")
         self.connect(self.pb_show_rv, QtCore.SIGNAL('clicked()'), self.do_show_rv)
 
@@ -1169,14 +1169,14 @@ class RV_MENU(QtGui.QMainWindow):
         self.rv_raw_radio = None 
         self.rv_phased_radio = None
         self.cb_show_model = None
-        self.cb_model_id = QtGui.QCheckBox("Model ID")
+        self.cb_model_id = QtWidgets.QCheckBox("Model ID")
         self.cb_model_id.setStatusTip("Use model for component identification.")
         self.connect(self.cb_model_id, QtCore.SIGNAL('stateChanged(int)'), lambda x: 0)
         self.cb_model_id.setEnabled(False)
 
         self.show_grid.addWidget(self.cb_model_id,2,1,1,2)
 
-        self.pb_show_spec = QtGui.QPushButton('Spectrum')
+        self.pb_show_spec = QtWidgets.QPushButton('Spectrum')
         self.pb_show_spec.setStatusTip("Show Spectrum window.")
         self.connect(self.pb_show_spec, QtCore.SIGNAL('clicked()'), self.do_show_spec)
 
@@ -1187,19 +1187,19 @@ class RV_MENU(QtGui.QMainWindow):
         
         self.cb_show_tpl = [None,None]
 
-        self.cb_normalization=QtGui.QCheckBox("Normalized")
+        self.cb_normalization=QtWidgets.QCheckBox("Normalized")
         self.cb_normalization.setChecked(self.spectrum.cb_normalization.isChecked())
         self.cb_normalization.setStatusTip("Toggle normalization of selected spectrum.")
         self.connect(self.cb_normalization, QtCore.SIGNAL('stateChanged(int)'), self.sync_normalization)
 
         self.show_grid.addWidget(self.cb_normalization,2,3,1,2)
 
-        self.pb_show_anal = QtGui.QPushButton('Analysis')
+        self.pb_show_anal = QtWidgets.QPushButton('Analysis')
         self.pb_show_anal.setStatusTip('Show Analysis window.')
         self.connect(self.pb_show_anal, QtCore.SIGNAL('clicked()'), self.do_show_anal)
         self.show_grid.addWidget(self.pb_show_anal,1,5,1,2)
 
-        self.cb_ca_update=QtGui.QCheckBox('CA update')  
+        self.cb_ca_update=QtWidgets.QCheckBox('CA update')  
         self.cb_ca_update.setStatusTip('Update Analysis while calculating all points.')
         self.connect(self.cb_ca_update, QtCore.SIGNAL('stateChanged(int)'), self.ca_update_changed)
 
@@ -1208,15 +1208,15 @@ class RV_MENU(QtGui.QMainWindow):
 
     def gui_bottom_buttons(self):
         """ GUI BOTTOM BUTTONS """
-        save_butt = QtGui.QPushButton("&Save",self)
+        save_butt = QtWidgets.QPushButton("&Save",self)
         save_butt.setStatusTip('Save object data and RV curve.')
         self.connect(save_butt, QtCore.SIGNAL('clicked()'), self.saveObject)
         self.show_grid.addWidget(save_butt,3,1,1,2)
-        prefs_butt = QtGui.QPushButton("&Prefs",self)
+        prefs_butt = QtWidgets.QPushButton("&Prefs",self)
         prefs_butt.setStatusTip('Edit preferences.')
         self.connect(prefs_butt, QtCore.SIGNAL('clicked()'), self.preferences.show_or_activate)
         self.show_grid.addWidget(prefs_butt,3,3,1,2)
-        quit_butt = QtGui.QPushButton("&Quit",self)
+        quit_butt = QtWidgets.QPushButton("&Quit",self)
         quit_butt.setStatusTip('Quit the application.')
         self.connect(quit_butt, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
         self.show_grid.addWidget(quit_butt,3,5,1,2)
@@ -1225,7 +1225,7 @@ class RV_MENU(QtGui.QMainWindow):
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication(sys.argv)  # start Qt application
+    app = QtWidgets.QApplication(sys.argv)  # start Qt application
     menu = RV_MENU()                    # create Matplotlib widget
     menu.show()
 

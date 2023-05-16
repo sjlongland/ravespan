@@ -38,7 +38,7 @@
 
 
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from libcommon import *
 
 """
@@ -47,7 +47,7 @@ from libcommon import *
 ####################################
 """
 
-class InstrumentDialog(QtGui.QDialog):
+class InstrumentDialog(QtWidgets.QDialog):
     """ Instrument Dialog Window - manage visibility of data according to instrument used """
     def __init__(self, parent=None):
         super(InstrumentDialog, self).__init__(parent)
@@ -55,7 +55,7 @@ class InstrumentDialog(QtGui.QDialog):
         
         self.setWindowTitle("Instruments")
         
-        vlayout = QtGui.QVBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
         
         self.def_row = 6
         clabels = ["instrument", 'A', "res.", "lambda_0", 'N', 'shift']
@@ -67,15 +67,15 @@ class InstrumentDialog(QtGui.QDialog):
         self.checkboxes = []
         self.instr_list = []
         
-        self.instr_table = QtGui.QTableWidget(self.def_row, def_col, self)
+        self.instr_table = QtWidgets.QTableWidget(self.def_row, def_col, self)
         self.instr_table.setHorizontalHeaderLabels(clabels)
         for k,i in self.cind.items():
             self.instr_table.setColumnWidth(i, cwidths[k])
         
         vlayout.addWidget(self.instr_table)
 
-        button_box = QtGui.QDialogButtonBox()
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
         vlayout.addWidget(button_box)
 
@@ -93,24 +93,24 @@ class InstrumentDialog(QtGui.QDialog):
         self.instr_table.setRowCount(max(self.def_row, len(instr_list)))
         
         for i, instr in enumerate(instr_list):
-            chkbox = QtGui.QCheckBox()
+            chkbox = QtWidgets.QCheckBox()
             chkbox.setChecked(1)
             self.connect(chkbox, QtCore.SIGNAL('stateChanged(int)'), self.main.curve.plot_data)
             self.checkboxes.append(chkbox)
             self.instr_table.setCellWidget(i, 1, chkbox)
                         
-            txt = QtGui.QTableWidgetItem(instr)
+            txt = QtWidgets.QTableWidgetItem(instr)
             txt.setFlags(QtCore.Qt.ItemFlags(QtCore.Qt.ItemIsEnabled))
             self.instr_table.setItem(i, 0, txt)
 
             for col, dic, fmt in [[2,d_res,"%.3f"], [3,d_f0,"%.2f"], [4,d_n, "%d"]]:
-                tobj = QtGui.QTableWidgetItem(fmt%dic[instr])
+                tobj = QtWidgets.QTableWidgetItem(fmt%dic[instr])
                 tobj.setFlags(QtCore.Qt.ItemFlags(QtCore.Qt.ItemIsEnabled))
                 tobj.setTextAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignCenter)
                 self.instr_table.setItem(i, col, tobj)
             
             for k,v in {'shift':'0.0'}.items():
-                obj = QtGui.QTableWidgetItem(v)
+                obj = QtWidgets.QTableWidgetItem(v)
                 obj.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.instr_table.setItem(i, self.cind[k], obj)
 
@@ -147,7 +147,7 @@ class InstrumentDialog(QtGui.QDialog):
 """
 
 
-class FittingDialog(QtGui.QDialog):
+class FittingDialog(QtWidgets.QDialog):
     """ Fitting Dialog Window - additional parameters to fit: third body, pulsations """
     def __init__(self, parent=None):
         super(FittingDialog, self).__init__(parent)
@@ -155,7 +155,7 @@ class FittingDialog(QtGui.QDialog):
         
         self.setWindowTitle("Fitting")
         
-        vlayout = QtGui.QVBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
         
         self.rvmodifiers_cb = {}
         rvmod_layout, rvmod_grid = {}, {}
@@ -163,13 +163,13 @@ class FittingDialog(QtGui.QDialog):
         self.rvmod_order = ["3rd_body", "puls1", "puls2"]
         self.rvmod_parorder = {} 
 
-        self.rvmodifiers_cb["3rd_body"] = QtGui.QCheckBox("third body")
+        self.rvmodifiers_cb["3rd_body"] = QtWidgets.QCheckBox("third body")
         self.connect(self.rvmodifiers_cb["3rd_body"], QtCore.SIGNAL('toggled(bool)'), self.main.param_changed)
         
-        rvmod_grid["3rd_body"] = QtGui.QGridLayout()
+        rvmod_grid["3rd_body"] = QtWidgets.QGridLayout()
         
-        tb_type_label = QtGui.QLabel("Type:")
-        self.tb_type = QtGui.QComboBox()
+        tb_type_label = QtWidgets.QLabel("Type:")
+        self.tb_type = QtWidgets.QComboBox()
         self.tb_type.addItems(["12+3","1+3", "2+3"])
         self.connect(self.tb_type, QtCore.SIGNAL('currentIndexChanged(QString)'), self.tb_mode_change)
         rvmod_grid["3rd_body"].addWidget(tb_type_label,0,1)
@@ -190,7 +190,7 @@ class FittingDialog(QtGui.QDialog):
             key, text, val, minval, maxval, step, decis = par
             self.tb_pdef_d[key] = val
             self.plims_d[key] = [minval, maxval]
-            self.tb_cb[key] = QtGui.QCheckBox(text, self)
+            self.tb_cb[key] = QtWidgets.QCheckBox(text, self)
             self.tb_spin[key] = set_QSpin(self, val, rmin=minval, rmax=maxval, step=step,decimals=decis)
             self.connect(self.tb_spin[key], QtCore.SIGNAL('valueChanged(double)'), self.tb_param_changed)
 
@@ -215,27 +215,27 @@ class FittingDialog(QtGui.QDialog):
         fun_puls_event = [self.puls1_param_changed, self.puls2_param_changed]
 
         for i, ipulsmod in enumerate(["puls1", "puls2"]):
-            self.rvmodifiers_cb[ipulsmod] = QtGui.QCheckBox("pulsations - "+chr(65+i))
+            self.rvmodifiers_cb[ipulsmod] = QtWidgets.QCheckBox("pulsations - "+chr(65+i))
             self.connect(self.rvmodifiers_cb[ipulsmod], QtCore.SIGNAL('toggled(bool)'), self.main.param_changed)
-            rvmod_grid[ipulsmod] = QtGui.QGridLayout()
+            rvmod_grid[ipulsmod] = QtWidgets.QGridLayout()
 
             for par in [['per', "P:",   10., 0.001,  39999., 0.01, 8], \
                        [  't0', "T0", 5000., -9999., 49999., 0.01, 5], \
                        [  'a0', "a0",    0., -9.99,    9.99,  0.1, 3]]:
                 key, text, val, minval, maxval, step, decis = par
                 self.puls_pdef_d[key] = val
-                self.puls_cb[i][key] = QtGui.QCheckBox(text, self)
+                self.puls_cb[i][key] = QtWidgets.QCheckBox(text, self)
                 self.puls_spin[i][key] = set_QSpin(self, val, rmin=minval, rmax=maxval, \
                                                    step=step, decimals=decis)
                 self.connect(self.puls_spin[i][key], QtCore.SIGNAL('valueChanged(double)'), fun_puls_event[i])
             self.plims_d["a0"] = [-9.99, 9.99]
 
             self.puls_cb[i]['t0'].setChecked(True)
-            pulsnharm_lab = QtGui.QLabel('nharm:', self)
+            pulsnharm_lab = QtWidgets.QLabel('nharm:', self)
             self.pulsnharm_spin[i] = set_QIntSpin(self,2,rmin=0,rmax=9)
             self.pulsnharm_spin[i].setMaximumWidth(90)
             self.connect(self.pulsnharm_spin[i], QtCore.SIGNAL('valueChanged(int)'), fun_puls_event[i])
-            self.puls_clear_butt[i] = QtGui.QPushButton("Clear")
+            self.puls_clear_butt[i] = QtWidgets.QPushButton("Clear")
             self.puls_clear_butt[i].setMaximumWidth(70)
             self.puls_clear_butt[i].setAutoDefault(False)
 
@@ -252,14 +252,14 @@ class FittingDialog(QtGui.QDialog):
         
         
         for rvmod in self.rvmod_order:
-            rvmod_layout[rvmod] = QtGui.QHBoxLayout()
+            rvmod_layout[rvmod] = QtWidgets.QHBoxLayout()
             rvmod_layout[rvmod].addSpacing(20)
             rvmod_layout[rvmod].addLayout(rvmod_grid[rvmod])
             vlayout.addWidget(self.rvmodifiers_cb[rvmod])
             vlayout.addLayout(rvmod_layout[rvmod])
 
-        button_box = QtGui.QDialogButtonBox()
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
         close_button.setAutoDefault(False)
         vlayout.addWidget(button_box)
@@ -504,7 +504,7 @@ class FittingDialog(QtGui.QDialog):
 ####################################
 """
 
-class TemplateDialog(QtGui.QDialog):
+class TemplateDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(TemplateDialog, self).__init__(parent)
         self.main = parent
@@ -521,20 +521,20 @@ class TemplateDialog(QtGui.QDialog):
 
         self.get_data_from_config()
 
-        vlayout = QtGui.QVBoxLayout()
-        layout = QtGui.QGridLayout()
-        huplayout = QtGui.QHBoxLayout()
-        vbotlayout = QtGui.QHBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QGridLayout()
+        huplayout = QtWidgets.QHBoxLayout()
+        vbotlayout = QtWidgets.QHBoxLayout()
 
-        tmpl_label = QtGui.QLabel("Template:")
+        tmpl_label = QtWidgets.QLabel("Template:")
 
         self.tmpl=[]
-        self.tmpl += [QtGui.QRadioButton("&1")]
-        self.tmpl += [QtGui.QRadioButton("&2")]
+        self.tmpl += [QtWidgets.QRadioButton("&1")]
+        self.tmpl += [QtWidgets.QRadioButton("&2")]
         self.connect(self.tmpl[0], QtCore.SIGNAL('toggled(bool)'), self.switch_template)
         self.connect(self.tmpl[1], QtCore.SIGNAL('toggled(bool)'), self.switch_template)
 
-        button_group = QtGui.QButtonGroup()        
+        button_group = QtWidgets.QButtonGroup()        
         button_group.addButton(self.tmpl[0])
         button_group.addButton(self.tmpl[1])
         
@@ -542,22 +542,22 @@ class TemplateDialog(QtGui.QDialog):
         huplayout.addWidget(self.tmpl[0])
         huplayout.addWidget(self.tmpl[1])
 
-        tlabel = QtGui.QLabel("<html>T<sub>eff</sub>:</html>")
+        tlabel = QtWidgets.QLabel("<html>T<sub>eff</sub>:</html>")
         tlabel.setToolTip("effective temperature")
-        glabel = QtGui.QLabel("<html>log <i>g</i>:</html>")
+        glabel = QtWidgets.QLabel("<html>log <i>g</i>:</html>")
         glabel.setToolTip("logarithm of gravitation")
-        mlabel = QtGui.QLabel("[Fe/H]:")
+        mlabel = QtWidgets.QLabel("[Fe/H]:")
         mlabel.setToolTip("metalicity")
-        rlabel = QtGui.QLabel("<html><i>v</i>sin(<i>i</i>):</html>")
+        rlabel = QtWidgets.QLabel("<html><i>v</i>sin(<i>i</i>):</html>")
         rlabel.setToolTip("rotation corrected for inclination")
 
         for p in ['teff', 'logg', 'feh']:
-            self.combos[p] = QtGui.QComboBox()
+            self.combos[p] = QtWidgets.QComboBox()
 
         self.rspin = set_QSpin(self,0,rmin=0,rmax=99,step=5, suffix=" km/s", decimals=0)
         self.rspin.setToolTip("<html>Setting <i>v</i>sin(<i>i</i>) differenet from 0 enables convolution of the selected template with a rotational profile. This process may cause some delay.</html>")
 
-        self.pb_add_interpolated = QtGui.QPushButton("+")
+        self.pb_add_interpolated = QtWidgets.QPushButton("+")
         self.pb_add_interpolated.setToolTip("<html>Will add interpolated template to the template list. The more parameters differ from the grid values the more time it will take to make interpolated spectrum.</html>")
         self.pb_add_interpolated.setMaximumWidth(60)
         self.pb_add_interpolated.setEnabled(False)
@@ -570,14 +570,14 @@ class TemplateDialog(QtGui.QDialog):
         self.connect(self.combos['feh'], QtCore.SIGNAL('activated(QString)'), lambda v: self.combo_event('feh',v))
         self.connect(self.rspin, QtCore.SIGNAL('valueChanged(double)'), self.rot_changed)
 
-        self.iname = QtGui.QLineEdit()
+        self.iname = QtWidgets.QLineEdit()
         self.iname.setToolTip("Interpolated spectrum name.")
         self.connect(self.iname, QtCore.SIGNAL('textChanged(QString)'), self.correct_iname)
 
-        button_box = QtGui.QDialogButtonBox()
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
-        self.apply_button = button_box.addButton(QtGui.QDialogButtonBox.Apply)
+        self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
         self.connect(self.apply_button, QtCore.SIGNAL('clicked()'), self.apply_params)
         vbotlayout.addWidget(button_box)
 
@@ -851,12 +851,12 @@ class TemplateDialog(QtGui.QDialog):
 ###################################
 """
 
-class PreferencesDialog(QtGui.QDialog):
+class PreferencesDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(PreferencesDialog, self).__init__(parent)
         self.main = parent
 
-        tabwidget = QtGui.QTabWidget(self)
+        tabwidget = QtWidgets.QTabWidget(self)
 
         tab_order = ["basic", "adv"]
         tab_names = {"basic": "Basic", "adv": "Advanced"}
@@ -864,8 +864,8 @@ class PreferencesDialog(QtGui.QDialog):
         tabs = {}
         tablayouts = {}
         for to in tab_order:
-            tabs[to] = QtGui.QWidget()
-            tablayouts[to] = QtGui.QVBoxLayout()
+            tabs[to] = QtWidgets.QWidget()
+            tablayouts[to] = QtWidgets.QVBoxLayout()
             tabs[to].setLayout(tablayouts[to])
             tabwidget.addTab(tabs[to], tab_names[to])
         
@@ -891,101 +891,101 @@ class PreferencesDialog(QtGui.QDialog):
             self.gopts[g] = {}
 
         for gid in self.group_order:
-            self.groups[gid] = QtGui.QGroupBox(self.group_names[gid])
-            self.glayouts[gid] = QtGui.QGridLayout(self.groups[gid])
+            self.groups[gid] = QtWidgets.QGroupBox(self.group_names[gid])
+            self.glayouts[gid] = QtWidgets.QGridLayout(self.groups[gid])
         
         sect_items = {}
         
         sect_items["gen"] = {\
-            "cb_update_plots_on_CA": [(1,1,1,1), 1, QtGui.QCheckBox, (1, "update plots on Calc All"),\
+            "cb_update_plots_on_CA": [(1,1,1,1), 1, QtWidgets.QCheckBox, (1, "update plots on Calc All"),\
                                             ""] }
         
         sect_items["spec"] = {\
-            "lab_min_res":     [(2,2,1,1), 1, QtGui.QLabel, ("<html>min. &lambda; step:</html>",),\
+            "lab_min_res":     [(2,2,1,1), 1, QtWidgets.QLabel, ("<html>min. &lambda; step:</html>",),\
                                           "If data has higher resolution (lower step) it will be binned for calculations.\n0.0 means OFF."],
             "spin_min_res":    [(2,3,1,1), 1, set_QSpin, (0., 0.0, 1.0, 0.01), \
                                           "If data has higher resolution (lower step) it will be binned for calculations.\n0.0 means OFF."], 
-            "lab_min_plotres": [(1,2,1,1), 1, QtGui.QLabel, ("<html>min. plot &Delta;&lambda;:</html>",),\
+            "lab_min_plotres": [(1,2,1,1), 1, QtWidgets.QLabel, ("<html>min. plot &Delta;&lambda;:</html>",),\
             "Minimum lambda step for spectrum plot.\nData is binned if it is lower (for faster plotting).\n0.0 means OFF."], \
             "spin_min_plotres":[(1,3,1,1), 1, set_QSpin, (0.1, 0.0, 1.0, 0.01), \
             "Minimum lambda step for spectrum plot.\nData is binned if it is lower (for faster plotting).\n0.0 means OFF."], \
-            "cb_show_mask":    [(1,1,1,1), 1, QtGui.QCheckBox, (1, "show mask"),\
+            "cb_show_mask":    [(1,1,1,1), 1, QtWidgets.QCheckBox, (1, "show mask"),\
                                           "Show what part of spectrum will be used in the analysis."], \
-            "cb_only_masked":  [(2,1,1,1), 1, QtGui.QCheckBox, (0, "only masked"),\
+            "cb_only_masked":  [(2,1,1,1), 1, QtWidgets.QCheckBox, (0, "only masked"),\
                                           ""],
-            "cb_convert_onload":[(3,1,1,2), 0, QtGui.QCheckBox, (0, "convert res. on load"),\
+            "cb_convert_onload":[(3,1,1,2), 0, QtWidgets.QCheckBox, (0, "convert res. on load"),\
                                           ""],
-            "pb_update_spec":   [(3,3,1,1), 1, QtGui.QPushButton, ("Update",80), "Updates spectrum window."]}
+            "pb_update_spec":   [(3,3,1,1), 1, QtWidgets.QPushButton, ("Update",80), "Updates spectrum window."]}
         
         sect_items["rvc"] = {\
-            "cb_autoswap":     [(1,1,1,1), 1, QtGui.QCheckBox, (1, "autoswap misidentified"),\
+            "cb_autoswap":     [(1,1,1,1), 1, QtWidgets.QCheckBox, (1, "autoswap misidentified"),\
                                           "Autoswap data points for misidentified components."], \
-            "cb_autodisable":  [(1,2,1,1), 1, QtGui.QCheckBox, (1, "autodisable outliers"),\
+            "cb_autodisable":  [(1,2,1,1), 1, QtWidgets.QCheckBox, (1, "autodisable outliers"),\
                                           "Automatically disable outlying points."], \
-            "cb_show_err":     [(2,1,1,1), 1, QtGui.QCheckBox, (0, "show errors"),\
+            "cb_show_err":     [(2,1,1,1), 1, QtWidgets.QCheckBox, (0, "show errors"),\
                                           "Show RV measurements errors."], \
-            "cb_show_lc":      [(2,2,1,1), 1, QtGui.QCheckBox, (1, "show light curve"),\
+            "cb_show_lc":      [(2,2,1,1), 1, QtWidgets.QCheckBox, (1, "show light curve"),\
                                           "Show light curve layer in RV Curve window."], \
-            "lab_res_ran":     [(3,1,1,1), 1, QtGui.QLabel, ("res. view range",),\
+            "lab_res_ran":     [(3,1,1,1), 1, QtWidgets.QLabel, ("res. view range",),\
                                           "Residuals view y-range (in km/s)."], \
             "spin_res_ran":    [(3,2,1,1), 1, set_QSpin, (0.81, 0.01, 9.9, 0.01), \
                                           "Residuals view y-range (in km/s)."] }
 
         sect_items["tpl"] = {\
-            "lab_tpl_rot_limb":[(1,1,1,1), 1, QtGui.QLabel, ("limb darkening coefficient:",), \
+            "lab_tpl_rot_limb":[(1,1,1,1), 1, QtWidgets.QLabel, ("limb darkening coefficient:",), \
                                         ""], \
             "spin_rot_limb":   [(1,2,1,1), 1, set_QSpin, (0.6, 0.0, 0.9, 0.1, 1), \
                                         ""], \
-            "cb_apply_closes": [(2,1,1,2), 1, QtGui.QCheckBox, (1, "apply closes Template dialog box"),\
+            "cb_apply_closes": [(2,1,1,2), 1, QtWidgets.QCheckBox, (1, "apply closes Template dialog box"),\
                                         "Autoswap data points for misidentified components."] }
         
         sect_items["norm"] = {
-            "lab_binfill":[(1,1,1,1), 1, QtGui.QLabel, ("points per bin:",), ""],
+            "lab_binfill":[(1,1,1,1), 1, QtWidgets.QLabel, ("points per bin:",), ""],
             "ispin_binfill":   [(1,2,1,1), 1, set_QIntSpin, (1000, 100, 10000, 500), ""],
-            "cb_norm_clean": [(1,3,1,1), 1, QtGui.QCheckBox, (1, "clean"), "Clean values higher than 1+noise for normalized spectrum."],
-            "lab_mode_histbins":[(2,1,1,1), 1, QtGui.QLabel, ("bins for mode value:",), ""],
+            "cb_norm_clean": [(1,3,1,1), 1, QtWidgets.QCheckBox, (1, "clean"), "Clean values higher than 1+noise for normalized spectrum."],
+            "lab_mode_histbins":[(2,1,1,1), 1, QtWidgets.QLabel, ("bins for mode value:",), ""],
             "ispin_mode_histbins":   [(2,2,1,1), 1, set_QIntSpin, (25, 10, 100, 5), ""],
-            "cb_norm_at": [(3,1,1,1), 1, QtGui.QCheckBox, (0, "normalize at:"), ""],
+            "cb_norm_at": [(3,1,1,1), 1, QtWidgets.QCheckBox, (0, "normalize at:"), ""],
             "spin_norm_at":   [(3,2,1,1), 1, set_QSpin, (0.9, 0.25, 1.000, 0.005,3), ""],
-            "pb_update_spec":   [(3,3,1,1), 1, QtGui.QPushButton, ("Update",100), "Updates spectrum window."]}
+            "pb_update_spec":   [(3,3,1,1), 1, QtWidgets.QPushButton, ("Update",100), "Updates spectrum window."]}
 
         sect_items["anal"] = {
-            "lab_auto_rv":   [(1,1,1,1), 1, QtGui.QLabel, ("auto-detect RV:",),
+            "lab_auto_rv":   [(1,1,1,1), 1, QtWidgets.QLabel, ("auto-detect RV:",),
                                      ""],
             "ispin_auto_rv": [(1,2,1,1), 1, set_QIntSpin, (2, 1, 4, 1),
                                         "How many velocities to detect automatically."],
-            "lab_v_range":[(2,1,1,1), 1, QtGui.QLabel, ("v-range mul/add:",), 
+            "lab_v_range":[(2,1,1,1), 1, QtWidgets.QLabel, ("v-range mul/add:",), 
                                         ""], 
             "spin_vran_mul":   [(2,2,1,1), 1, set_QSpin, (1.5, 1.0, 3.0, 0.1, 1), 
                                         ""], 
             "ispin_vran_add":   [(2,3,1,1), 1, set_QIntSpin, (30, 0, 99, 1), 
                                         ""], 
-            "cb_model_id":   [(5,1,1,1), 1, QtGui.QCheckBox, (0, "ID from model"),
+            "cb_model_id":   [(5,1,1,1), 1, QtWidgets.QCheckBox, (0, "ID from model"),
                                               "Use model for component identification."], 
-            "cb_model_v":    [(5,2,1,1), 1, QtGui.QCheckBox, (0, "V from model"),
+            "cb_model_v":    [(5,2,1,1), 1, QtWidgets.QCheckBox, (0, "V from model"),
                                           "Use model to look for velocities."],
-            "lab_ccf_fitfunc":   [(3,1,1,1), 1, QtGui.QLabel, ("CCF fit function:",),
+            "lab_ccf_fitfunc":   [(3,1,1,1), 1, QtWidgets.QLabel, ("CCF fit function:",),
                                      ""],
-            "combo_ccf_fitfunc": [(3,2,1,2), 1, QtGui.QComboBox, (0, ["4th-order polynomial","gaussian"]),
+            "combo_ccf_fitfunc": [(3,2,1,2), 1, QtWidgets.QComboBox, (0, ["4th-order polynomial","gaussian"]),
                                           ""],
-            "lab_bf_fitfunc":    [(4,1,1,1), 1, QtGui.QLabel, ("BF fit function:",),
+            "lab_bf_fitfunc":    [(4,1,1,1), 1, QtWidgets.QLabel, ("BF fit function:",),
                                      ""],
-            "combo_bf_fitfunc": [(4,2,1,2), 1, QtGui.QComboBox, (1, ["rotational profile","gaussian","4th-order polynomial"]), ""]}
+            "combo_bf_fitfunc": [(4,2,1,2), 1, QtWidgets.QComboBox, (1, ["rotational profile","gaussian","4th-order polynomial"]), ""]}
 
         sect_items["fit"] = {
-            "lab_puls_four_lim":[(1,1,1,1), 1, QtGui.QLabel, ("Fourier coeff. limit (+/-):",),
+            "lab_puls_four_lim":[(1,1,1,1), 1, QtWidgets.QLabel, ("Fourier coeff. limit (+/-):",),
                                         ""],
             "spin_fourier_lim":   [(1,2,1,1), 1, set_QSpin, (29.99, 0.01, 99.99, 0.1, 2),
                                         ""]}
 
         sect_items["file"] = {
-           "lab_savespec_ftype": [(1,1,1,1), 1, QtGui.QLabel, ("Saved spectra file type:",), ""],
-           "combo_savespec_ftype": [(1,2,1,2), 1, QtGui.QComboBox, (0, ["text", "binary"]), ""] }
+           "lab_savespec_ftype": [(1,1,1,1), 1, QtWidgets.QLabel, ("Saved spectra file type:",), ""],
+           "combo_savespec_ftype": [(1,2,1,2), 1, QtWidgets.QComboBox, (0, ["text", "binary"]), ""] }
 
         sect_items["advspec"] = {
-            "lab_nsingular":[(1,1,1,1), 1, QtGui.QLabel, ("Max. rank of SVD:",), ""],
+            "lab_nsingular":[(1,1,1,1), 1, QtWidgets.QLabel, ("Max. rank of SVD:",), ""],
             "ispin_nsingular":   [(1,2,1,1), 1, set_QIntSpin, (501, 301, 1001, 100), "Maximum rank of the SVD matrices."],
-            "lab_nkeepsvd":[(2,1,1,1), 1, QtGui.QLabel, ("# of SVD to keep:",), ""],
+            "lab_nkeepsvd":[(2,1,1,1), 1, QtWidgets.QLabel, ("# of SVD to keep:",), ""],
             "ispin_nkeepsvd":   [(2,2,1,1), 1, set_QIntSpin, (2, 1, 5, 1), "Number of SVD matrices to keep in memory."],
             }
 
@@ -1048,12 +1048,12 @@ class PreferencesDialog(QtGui.QDialog):
                 else:
                     tablayouts[keytab].addWidget(self.groups[gid])
 
-        mainlayout = QtGui.QVBoxLayout()
+        mainlayout = QtWidgets.QVBoxLayout()
         mainlayout.addWidget(tabwidget)
 
-        button_box = QtGui.QDialogButtonBox()
-        save_button = button_box.addButton(QtGui.QDialogButtonBox.Save)
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        save_button = button_box.addButton(QtWidgets.QDialogButtonBox.Save)
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(save_button, QtCore.SIGNAL('clicked()'), self.save_preferences)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
         mainlayout.addWidget(button_box)
@@ -1245,23 +1245,23 @@ class PreferencesDialog(QtGui.QDialog):
 ###################################
 """
 
-class EditMaskDialog(QtGui.QDialog):
+class EditMaskDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(EditMaskDialog, self).__init__(parent)
         self.main = parent
 
-        vlayout = QtGui.QVBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
 
-        self.editfield = QtGui.QPlainTextEdit()
+        self.editfield = QtWidgets.QPlainTextEdit()
         self.editfield.setMinimumWidth(400)
         self.editfield.setMinimumHeight(300)
         self.load_maskfile()
         vlayout.addWidget(self.editfield)
 
-        button_box = QtGui.QDialogButtonBox()
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
-        self.apply_button = button_box.addButton(QtGui.QDialogButtonBox.Apply)
+        self.apply_button = button_box.addButton(QtWidgets.QDialogButtonBox.Apply)
         self.connect(self.apply_button, QtCore.SIGNAL('clicked()'), self.apply_masks)
         vlayout.addWidget(button_box)
 
@@ -1303,14 +1303,14 @@ class EditMaskDialog(QtGui.QDialog):
 ###################################
 """
 
-class HelpDialog(QtGui.QDialog):
+class HelpDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(HelpDialog, self).__init__(parent)
         self.main = parent
 
-        vlayout = QtGui.QVBoxLayout()
+        vlayout = QtWidgets.QVBoxLayout()
 
-        self.txt = QtGui.QTextEdit()
+        self.txt = QtWidgets.QTextEdit()
         self.txt.setMinimumWidth(400)
         self.txt.setMinimumHeight(300)
         self.txt.setReadOnly(True)
@@ -1319,8 +1319,8 @@ class HelpDialog(QtGui.QDialog):
 
         vlayout.addWidget(self.txt)
 
-        button_box = QtGui.QDialogButtonBox()
-        close_button = button_box.addButton(QtGui.QDialogButtonBox.Close)
+        button_box = QtWidgets.QDialogButtonBox()
+        close_button = button_box.addButton(QtWidgets.QDialogButtonBox.Close)
         self.connect(close_button, QtCore.SIGNAL('clicked()'), QtCore.SLOT('close()'))
         vlayout.addWidget(button_box)
 

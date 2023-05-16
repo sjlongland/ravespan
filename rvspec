@@ -17,7 +17,7 @@ for arg in sys.argv[1:]:
     elif arg.endswith(".obj"):
         objfile = arg
 
-app = QtGui.QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
 menu = RV_MENU(objfile=objfile, datadir=datadir, slibdir=slibdir, verbose=verb)
 menu.show()
 

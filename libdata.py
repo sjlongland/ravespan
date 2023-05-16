@@ -85,7 +85,7 @@ class DATA_VIEW(QtWidgets.QMainWindow):
         filemenu_items = {"open": ["Open", "Ctrl+O", 'Open object', lambda: 0],
             'saveall': ["Save all", "Ctrl+S", 'Save all comumns', self.curve.save_rvc_interactive],
             'saveselas': ["Save selected as...", None, 'Save only selected columns as...', self.save_selected_cols],
-            'quit': ["Quit", "Ctrl+Q", 'Quit application', QtCore.SLOT('close()')]
+            'quit': ["Quit", "Ctrl+Q", 'Quit application', self._on_quit]
         }
 
         for fmitem in filemenu_order:
@@ -430,3 +430,13 @@ class DATA_VIEW(QtWidgets.QMainWindow):
             if self.col_show[cid]:
                 cols_to_save.append(cid)
         self.curve.save_rvc_interactive(cols_to_save)
+
+    def _on_quit(self):
+        """ Close the application """
+        # https://stackoverflow.com/a/53387775
+        app = QtWidgets.QApplication.instance()
+        if app is None:
+            # if it does not exist then a QApplication is created
+            app = QtWidgets.QApplication([])
+
+        app.exit(0)

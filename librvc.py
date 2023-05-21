@@ -522,11 +522,10 @@ class RV_CURVE(QtWidgets.QMainWindow):
         self.clean_files()
 
         self.dirpath = str(dirpath)
-        if not self.dirpath.startswith('/'):
-            if self.dirpath[0] == '.':
-                self.dirpath = self.main.specdir + self.dirpath[1:] 
-            else:
-                self.dirpath = self.main.specdir + '/' + self.dirpath
+        if not os.path.isabs(self.dirpath):
+            # If the given dirpath is relative, assume relative to specdir
+            self.dirpath = os.path.join(self.main.specdir, self.dirpath)
+
         if not os.path.isdir(self.dirpath):
             msgBox = QtWidgets.QMessageBox.warning(self, "Data Error", "No directory with data for the selected object is found.", QtWidgets.QMessageBox.Ok)
             return

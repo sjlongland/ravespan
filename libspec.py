@@ -609,7 +609,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
             for line in smfile:
                 ldata = line.split()
                 submasks = "".join(ldata[1:]).split(',')    
-                mask = [list(map(int,x.split('-'))) for x in submasks]
+                mask = [list(map(float,x.split('-'))) for x in submasks]
                 self.masks[ldata[0]] = mask
     
     def select_mask(self, name):

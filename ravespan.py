@@ -126,7 +126,7 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.tpl_activation_disabled = False
         self.mask_activation_disabled = False
         self.datadir = os.path.realpath(datadir)
-        self.slibdir = slibdir
+        self.slibdir = os.path.realpath(slibdir)
         self.tpl_buttons_enabled = True
         self.tpl_dir = os.path.join(self.datadir, 'templates')
         self.obj_dir = os.path.join(self.datadir, 'objects')

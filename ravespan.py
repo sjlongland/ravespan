@@ -605,8 +605,7 @@ class RV_MENU(QtWidgets.QMainWindow):
 
 
     def openObject(self):
-        filepath = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', self.obj_dir)
-        filepath = str(filepath)
+        (filepath, _) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', self.obj_dir)
         if not filepath: return
         if not filepath.endswith(".obj"):
             msgBox = QtWidgets.QMessageBox.warning(self, "File error", "This is not an object file.", QtWidgets.QMessageBox.Ok)

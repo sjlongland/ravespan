@@ -620,15 +620,16 @@ class TemplateDialog(QtWidgets.QDialog):
 
     def get_data_from_config(self):
         self.grid = {}
-        if not os.path.exists(self.main.slibdir + '/slib.cfg'):
+        slibcfg = os.path.join(self.main.slibdir, 'slib.cfg')
+        if not os.path.exists(slibcfg):
+            print("INFO: could not find %r" % slibcfg)
             print("INFO: Template spectra library (optional) not found. You can still use templates from ./templates directory.")
-            #print "INFO: file '%s/slib.cfg' not found."%self.main.slibdir
             self.w0, self.res = "4000", "0.02"
             for p in self.pars:
                 self.grid[p] = array([])
             self.main.disable_tpl_buttons()
             return
-        with open(self.main.slibdir + '/slib.cfg') as slib:
+        with open(slibcfg) as slib:
             for line in slib:
                 if line[13]=='=':
                     exec(line)
@@ -763,7 +764,7 @@ class TemplateDialog(QtWidgets.QDialog):
                 for v1 in all_values[k1]:
                     strlist = list(map(str, [v1,v2,v3])) + [self.w0] + [self.res]
                     tname = "_".join(strlist)
-                    tpath = self.main.slibdir + "/" + tname
+                    tpath = os.path.join(self.main.slibdir, tname)
                     dtfiles += [fromfile(tpath,dtype=float32)]
         return dtfiles
 
@@ -834,7 +835,7 @@ class TemplateDialog(QtWidgets.QDialog):
         
         itid   = str(self.iname.text())
         itname = itid + "_%s_%s"%(self.w0, self.res)
-        itpath =  self.main.tpl_dir + '/' + itname
+        itpath =  os.path.join(self.main.tpl_dir, itname)
         ispec.tofile(itpath)
         
         with open(itpath+".info", 'w') as finfo:
@@ -1271,17 +1272,17 @@ class EditMaskDialog(QtWidgets.QDialog):
     def load_maskfile(self):
         mask_fname = None
         for fname in ["masks.list", "masks.ranges", "spectrum.masks"]:
-            if os.path.exists(self.main.datadir + "/" + fname):
+            if os.path.exists(os.path.join(self.main.datadir, fname)):
                 mask_fname = fname
                 break
         if mask_fname is None:
             return
-        with open(self.main.datadir + "/" + mask_fname) as smfile:
+        with open(os.path.join(self.main.datadir, mask_fname)) as smfile:
             text = smfile.read()
             self.editfield.setPlainText(text)
 
     def save_maskfile(self):
-        with open(self.main.datadir + "/masks.list","w") as smfile:
+        with open(os.path.join(self.main.datadir, "masks.list"),"w") as smfile:
             text = str(self.editfield.toPlainText())
             smfile.write(text.rstrip()+"\n")
 

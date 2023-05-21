@@ -128,12 +128,12 @@ class RV_MENU(QtWidgets.QMainWindow):
         self.datadir = os.path.realpath(datadir)
         self.slibdir = slibdir
         self.tpl_buttons_enabled = True
-        self.tpl_dir = self.datadir + '/templates'
-        self.obj_dir = self.datadir + '/objects'
-        self.specdir = self.datadir + '/specdb'
-        self.rvs_dir = self.datadir + '/rvs'
-        self.lc_dir  = self.datadir + '/lcs'
-        self.cachedir = self.datadir + '/cache'
+        self.tpl_dir = os.path.join(self.datadir, 'templates')
+        self.obj_dir = os.path.join(self.datadir, 'objects')
+        self.specdir = os.path.join(self.datadir, 'specdb')
+        self.rvs_dir = os.path.join(self.datadir, 'rvs')
+        self.lc_dir  = os.path.join(self.datadir, 'lcs')
+        self.cachedir = os.path.join(self.datadir, 'cache')
         self.RVMethods = ["ccf","todcor","bf"]
         self.default_data_values()
 

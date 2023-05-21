@@ -598,14 +598,14 @@ class SPECTRUM(QtWidgets.QMainWindow):
         """ LOAD MASKS """
         self.masks = {"full": [[0000,10000]]}
         mask_fname = None
-        for fname in ["masks.list", "masks.ranges", "spectrum.masks"]:
-            if os.path.exists(self.main.datadir + "/" + fname):
+        for fname in ("masks.list", "masks.ranges", "spectrum.masks"):
+            if os.path.exists(os.path.join(self.main.datadir, fname)):
                 mask_fname = fname
                 break
         if mask_fname is None:
-            print("Warning: file '%s/masks.list' not found."%self.main.datadir)
+            print("Warning: file %r not found." % (os.path.join(self.main.datadir, "masks.list"),))
             return
-        with open(self.main.datadir + "/" + mask_fname) as smfile:
+        with open(os.path.join(self.main.datadir, mask_fname)) as smfile:
             for line in smfile:
                 ldata = line.split()
                 submasks = "".join(ldata[1:]).split(',')    
@@ -797,8 +797,8 @@ class SPECTRUM(QtWidgets.QMainWindow):
 
         i = tnum
         
-        slib_path = self.main.slibdir + "/"+tpl_file
-        tpl_path = self.main.tpl_dir + "/"+tpl_file
+        slib_path = os.path.join(self.main.slibdir, tpl_file)
+        tpl_path = os.path.join(self.main.tpl_dir, tpl_file)
         
         if para:
             self.tpl_specs[i] = fromfile(slib_path,dtype=float32)
@@ -823,7 +823,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
         shift = 0
         
         if vals[-1] == "SPECIAL":
-            fname = self.main.tpl_dir + "/"+tpl_file.replace("_SPECIAL", ".data")
+            fname = os.path.join(self.main.tpl_dir, tpl_file.replace("_SPECIAL", ".data"))
             with open(fname,'r') as fdata:
                 l1 = fdata.readline().split()
                 l2 = fdata.readline().split()
@@ -1221,7 +1221,7 @@ class SPECTRUM(QtWidgets.QMainWindow):
 
     def save_analplot(self, xdata, data, prefix, format = "%.4f"):
         """ NOT IN USE """
-        cachepath = self.main.cachedir + "/"+self.main.data["id"]
+        cachepath = os.path.join(self.main.cachedir, self.main.data["id"])
         ensure_dir_exists(cachepath)
         hjd = self.main.curve.get_current_hjd()
         datapath = cachepath+"_"+prefix+"_"+str(hjd)
@@ -1527,10 +1527,10 @@ class SPECTRUM(QtWidgets.QMainWindow):
  
             sdname = sdid + "_SPECIAL"
             sddata = sdid + ".data"
-            sdpath =  self.main.tpl_dir + '/' + sdname
+            sdpath =  os.path.join(self.main.tpl_dir, sdname)
             float32(new_norm).tofile(sdpath)
 
-            sddpath =  self.main.tpl_dir + '/' + sddata
+            sddpath =  os.path.join(self.main.tpl_dir, sddata)
             with open(sddpath,'w') as fsdd:
                 fsdd.write("wavelength0= %f\n"%f0)
                 fsdd.write("resolution= %.12f\n"%res)           

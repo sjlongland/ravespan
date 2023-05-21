@@ -11,7 +11,7 @@ verb = False
 objfile = None
 
 for arg in sys.argv[1:]:
-    print arg
+    print(arg)
     if arg[:2]=="-v":
         verb = True
     elif arg.endswith(".obj"):

@@ -1432,9 +1432,9 @@ class RV_CURVE(QtWidgets.QMainWindow):
                 verts = create_verts_from_errs(xres_on, yres_on[i], eres_on)
                 self.ve_res[i].set_verts(verts)
 
-        npoints = sum(map(len, yres_on))
-        if stats and npoints>1:
-            rstd = sqrt( sum(map(sum, [iy**2 for iy in yres_on])) / npoints )
+        npoints = sum(list(map(len, yres_on)))
+        if stats and npoints > 1:
+            rstd = sqrt( sum(list(map(sum, [iy**2 for iy in yres_on]))) / npoints )
             
             y2sum = asarray(list(map(sum, [iy**2 for iy in yres_on]))) 
             ylens = asarray(list(map(len, yres_on))) 
